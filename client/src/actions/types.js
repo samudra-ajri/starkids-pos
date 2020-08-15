@@ -8,3 +8,7 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAIL = 'LOGIN_FAIL';
 export const LOGOUT = 'LOGOUT';
 export const ACCOUNT_DELETED = 'ACCOUNT_DELETED';
+
+export const GET_ITEMS = 'GET_ITEMS';
+export const ERROR_ITEM = 'ERROR_ITEMS';
+export const CLEAR_ITEM = 'CLEAR_ITEM';

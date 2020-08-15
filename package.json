@@ -19,6 +19,8 @@
     "express-validator": "^6.6.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.28",
-    "normalize-url": "^5.1.0"
+    "normalize-url": "^5.1.0",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^1.2.0"
   }
 }
