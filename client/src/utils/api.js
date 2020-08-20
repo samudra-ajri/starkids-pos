@@ -3,10 +3,10 @@ import store from '../store';
 import { LOGOUT } from '../actions/types';
 
 const api = axios.create({
-  baseURL: '/api',
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  baseURL: '/api'
+  // headers: {
+  //   'Content-Type': 'application/json'
+  // }
 });
 /**
  intercept any error responses from the api

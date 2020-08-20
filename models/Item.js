@@ -21,7 +21,8 @@ const ItemSchema = new mongoose.Schema({
     }
   },
   image: {
-    type: String
+    type: String,
+    default: "default.jpg"
   },
   date: {
     type: Date,

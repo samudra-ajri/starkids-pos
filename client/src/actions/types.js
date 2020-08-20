@@ -9,6 +9,13 @@ export const LOGIN_FAIL = 'LOGIN_FAIL';
 export const LOGOUT = 'LOGOUT';
 export const ACCOUNT_DELETED = 'ACCOUNT_DELETED';
 
+export const GET_ITEM = 'GET_ITEM';
 export const GET_ITEMS = 'GET_ITEMS';
 export const ERROR_ITEM = 'ERROR_ITEMS';
 export const CLEAR_ITEM = 'CLEAR_ITEM';
+export const IMAGE_ITEM = 'IMAGE_ITEM';
+
+export const BASKET_TRANSACTIONS = 'GET_TRANSACTION';
+export const GET_TRANSACTIONS = 'GET_TRANSACTIONS';
+export const ERROR_TRANSACTION = 'ERROR_TRANSACTIONS';
+export const CLEAR_TRANSACTION = 'CLEAR_TRANSACTION';

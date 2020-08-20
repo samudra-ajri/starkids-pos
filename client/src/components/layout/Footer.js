@@ -1,8 +1,4 @@
-import React, { useState, Fragment } from 'react';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { logout } from '../../actions/auth';
+import React from 'react';
 import { Segment } from 'semantic-ui-react';
 
 const Footer = () => {

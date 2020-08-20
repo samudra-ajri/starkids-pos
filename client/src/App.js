@@ -24,10 +24,12 @@ const App = () => {
       <Router>
         <Fragment>
           <Navbar />
-          <Switch>
-            <Route exact path="/" component={Landing} />
-            <Route component={Routes} />
-          </Switch>
+          <div style={{minHeight:'100vh'}}>
+            <Switch>
+              <Route exact path="/" component={Landing} />
+              <Route component={Routes} />
+            </Switch>
+          </div>
           <Footer />
         </Fragment>
       </Router>

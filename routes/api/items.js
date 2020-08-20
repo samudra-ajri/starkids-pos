@@ -134,4 +134,25 @@ router.put('/:id', [auth, checkObjectId('id'), [
     }
 );
 
+// @route    PUT api/items/upload
+// @desc     Upload item image
+// @access   Private
+router.post('/upload', auth, async (req, res) => {
+    if (req.files === null) {
+        return res.status(400).json({ msg: 'No file uploaded'});
+    }
+
+    const file = req.files.file;
+    const nameItem = req.body.nameItem;
+
+    file.mv(`${__dirname}/../../client/src/img/${nameItem}_${file.name}`, err => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Server Error');
+        }
+
+        res.json({ fileName: file.name, filePath: `/img/${file.name}` });
+    });
+});
+
 module.exports = router;

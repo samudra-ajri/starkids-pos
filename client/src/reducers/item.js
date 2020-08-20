@@ -1,13 +1,16 @@
 import {
+    GET_ITEM,
     GET_ITEMS,
     ERROR_ITEM,
     CLEAR_ITEM,
+    IMAGE_ITEM
   } from '../actions/types';
 
   const initialState = {
     item: null,
     items: [],
     loading: true,
+    file: null,
     error: {}
   };
 
@@ -15,6 +18,18 @@ import {
     const { type, payload } = action;
   
     switch (type) {
+      case IMAGE_ITEM:
+        return {
+          ...state,
+          file: payload,
+          loading: false
+        };
+      case GET_ITEM:
+        return {
+          ...state,
+          item: payload,
+          loading: false
+        };
       case GET_ITEMS:
         return {
           ...state,
@@ -26,12 +41,12 @@ import {
           ...state,
           error: payload,
           loading: false,
-          profile: null
+          item: null
         };
       case CLEAR_ITEM:
         return {
           ...state,
-          profile: null,
+          item: null
         };
       default:
         return state;

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { logout } from '../../actions/auth';
 import { Menu, Icon } from 'semantic-ui-react';
 
-const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
+const Navbar = ({ auth: { isAuthenticated, loading }, logout, basket }) => {
   const [activeItem, setActiveItem] = useState('produk');
 
   const onClick = (e, { name }) => {
@@ -14,29 +14,25 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
 
   const authLinks = (
     <Fragment>
-      <Link to="/create-item">
-        <Menu.Item name='' onClick={onClick}><Icon name="add" color={activeItem === '' && 'green'}/></Menu.Item> 
-      </Link>
-      <Link to="/">
-        <Menu.Item name='produk' active={activeItem === 'produk'} onClick={onClick}/>
-      </Link>
-      <Link to="/dashboard">
-        <Menu.Item name='dashboard' active={activeItem === 'dashboard'} onClick={onClick}/>
-      </Link>
-      <a onClick={logout} href='#!'>
-        <Menu.Item name='logout' active={activeItem === 'logout'} onClick={onClick}/>
-      </a>
+      {basket.length !== 0 &&
+      <Menu.Item name='basket' as={Link} to='/create-transaction' active={activeItem === 'basket'} onClick={onClick}>
+        <Icon name='shopping basket' color='orange'/><b style={{color:'orange'}}>{basket.length}</b>
+      </Menu.Item> 
+      }
+      <Menu.Item name='add' as={Link} to='/create-item' active={activeItem === 'add'} onClick={onClick}>
+        <Icon name="add" color={activeItem === 'add' ? 'green' : 'black'}/>
+      </Menu.Item> 
+      
+      <Menu.Item name='produk' as={Link} to='/' active={activeItem === 'produk'} onClick={onClick}/>
+      <Menu.Item name='dashboard' as={Link} to='/dashboard' active={activeItem === 'dashboard'} onClick={onClick}/>
+      <Menu.Item name='logout' active={activeItem === 'logout'} onClick={logout}/>
     </Fragment>
   );
     
   const guestLinks = (
     <Fragment>
-      <Link to="/">
-        <Menu.Item name='produk' active={activeItem === 'produk'} onClick={onClick}/>
-      </Link>
-      <Link to="/login">
-        <Menu.Item name='login' active={activeItem === 'login'} onClick={onClick}/>
-      </Link>
+        <Menu.Item name='produk' href='/' active={activeItem === 'produk'} onClick={onClick}/>
+        <Menu.Item name='login' href='/login' active={activeItem === 'login'} onClick={onClick}/>
     </Fragment>
   );
 
@@ -56,11 +52,13 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
 
 Navbar.propTypes = {
   logout: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  basket: PropTypes.array.isRequired
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  basket: state.transaction.transactions
 });
 
 export default connect(mapStateToProps, { logout })(Navbar);
