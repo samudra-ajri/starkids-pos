@@ -11,9 +11,7 @@ const checkObjectId = require('../../middleware/checkObjectId');
 // @desc     Create customer
 // @access   Private
 router.post('/', [auth, [
-        check('name', 'Name is required').not().isEmpty(),
-        check('email', 'Please include a valid email').isEmail(),
-        check('phone', 'Please include a valid phone number').isNumeric(),
+        check('name', 'Name is required').not().isEmpty()
     ]],
     async (req, res) => {
         const errors = validationResult(req);

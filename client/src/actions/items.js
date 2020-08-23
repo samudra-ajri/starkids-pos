@@ -53,3 +53,21 @@ export const getItems = () => async dispatch => {
   }
 };
 
+// Update item quantity
+export const patchQuantity = (body, itemID) => async dispatch => {
+  dispatch({ type: CLEAR_ITEM });
+
+  try {
+    const res = await api.patch(`/items/${itemID}`, body);
+
+    dispatch({
+      type: GET_ITEM,
+      payload: res.data
+    });
+  } catch (err) {
+    dispatch({
+      type: ERROR_ITEM,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};

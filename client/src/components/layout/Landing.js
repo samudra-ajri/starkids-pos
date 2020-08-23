@@ -16,7 +16,7 @@ const Landing = ({ isAuthenticated, getItems, basketItems, item: { items, loadin
  
   useEffect(() => {
     getItems();
-}, [getItems]);
+  }, [getItems]);
 
   items.sort(function(a, b){
     var x = a.name.toLowerCase();
@@ -32,7 +32,7 @@ const Landing = ({ isAuthenticated, getItems, basketItems, item: { items, loadin
 
   const onClick = (e, {detailitem}) => {
     if (isAuthenticated) {
-      if (!selectID.includes(detailitem._id)) {
+      if (!selectID.includes(detailitem._id) && detailitem.quantity !== 0) {
         setSelectID([detailitem._id,...selectID]);
         setSelect([detailitem,...select]);
       } else {

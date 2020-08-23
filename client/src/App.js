@@ -10,6 +10,8 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { loadUser } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
+import Alert from './components/layout/Alert';
+import { Container } from 'semantic-ui-react';
 
 import './App.css';
 
@@ -24,6 +26,9 @@ const App = () => {
       <Router>
         <Fragment>
           <Navbar />
+          <Container style={{marginTop:'0px'}}>
+            <Alert />
+          </Container>
           <div style={{minHeight:'100vh'}}>
             <Switch>
               <Route exact path="/" component={Landing} />

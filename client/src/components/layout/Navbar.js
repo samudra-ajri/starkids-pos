@@ -31,8 +31,8 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout, basket }) => {
     
   const guestLinks = (
     <Fragment>
-        <Menu.Item name='produk' href='/' active={activeItem === 'produk'} onClick={onClick}/>
-        <Menu.Item name='login' href='/login' active={activeItem === 'login'} onClick={onClick}/>
+        <Menu.Item name='produk' as={Link} to='/' active={activeItem === 'produk'} onClick={onClick}/>
+        <Menu.Item name='login' as={Link} to='/login' active={activeItem === 'login'} onClick={onClick}/>
     </Fragment>
   );
 

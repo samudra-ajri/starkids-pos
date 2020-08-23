@@ -52,7 +52,15 @@ router.post('/', [auth, [
 // @access   Private
 router.get('/', auth, async (req, res) => {
     try {
-        const transactions = await Transaction.find().populate('customer', ['name']);
+        const transactions = await Transaction.find().populate({
+            path:'customer',
+            model:'customer',
+            select:'name'
+        }).populate({
+            path:'stuff.item',
+            model:'item',
+            select:'name'
+        });
         res.json(transactions);
     } catch (err) {
         console.error(err.message);
@@ -121,6 +129,32 @@ router.put('/:id', [auth, checkObjectId('id'), [
             res.status(500).send('Server Error');
         }
     }
+);
+
+// @route    GET api/transactions/:from/to/:to
+// @desc     Find transactions betwen 2 dates
+// @access   Private
+router.get('/:from/to/:to', auth, async (req, res) => {
+    const from = new Date(req.params.from);
+    const to = new Date(req.params.to);
+    const toPlusOne = to.setDate(to.getDate()+1);
+    try {
+        const found = await Transaction.find({"date":{ '$gte':from, '$lte':toPlusOne }}).populate({
+            path:'customer',
+            model:'customer',
+            select:'name'
+        }).populate({
+            path:'stuff.item',
+            model:'item',
+            select:'name'
+        });;
+        
+        res.json(found);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+}
 );
 
 module.exports = router;

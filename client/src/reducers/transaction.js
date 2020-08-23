@@ -1,10 +1,13 @@
 import {
     BASKET_TRANSACTIONS,
+    BASKET_CLEAN,
+    GET_TRANSACTIONS,
     ERROR_TRANSACTION,
     CLEAR_TRANSACTION
-} from '../actions/types';
+  } from '../actions/types';
 
 const initialState = {
+    completeTransactions: [],
     transaction: null,
     transactions: [],
     loading: true,
@@ -16,6 +19,18 @@ export default function (state = initialState, action) {
   
     switch (type) {
       case BASKET_TRANSACTIONS:
+        return {
+          ...state,
+          transactions: payload,
+          loading: false
+        };
+      case GET_TRANSACTIONS:
+        return {
+          ...state,
+          completeTransactions: payload,
+          loading: false
+        };
+      case BASKET_CLEAN:
         return {
           ...state,
           transactions: payload,

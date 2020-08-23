@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { Button, Form } from 'semantic-ui-react';
+import { Button, Form, Container } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -36,6 +36,7 @@ const CreateItem = ({ createItem, addImage }) => {
 
     return (
         <Fragment>
+            <Container>
             <h1>Tambah Produk</h1>
             <Form style={{paddingBottom:'3rem'}} onSubmit={onSubmit}>
                 <Form.Field>
@@ -95,6 +96,7 @@ const CreateItem = ({ createItem, addImage }) => {
                 </Form.Field>
                 <Button primary type='submit'>Submit</Button>
             </Form>
+            </Container>
         </Fragment>
     )
 };

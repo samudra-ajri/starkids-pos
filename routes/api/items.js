@@ -134,7 +134,7 @@ router.put('/:id', [auth, checkObjectId('id'), [
     }
 );
 
-// @route    PUT api/items/upload
+// @route    POST api/items/upload
 // @desc     Upload item image
 // @access   Private
 router.post('/upload', auth, async (req, res) => {
@@ -153,6 +153,20 @@ router.post('/upload', auth, async (req, res) => {
 
         res.json({ fileName: file.name, filePath: `/img/${file.name}` });
     });
+});
+
+// @route    PATCH api/items/:id
+// @desc     Update body document
+// @access   Private
+router.patch('/:id', [auth, checkObjectId('id')], async (req, res) => {
+    try {
+        const item= await Item.findByIdAndUpdate(req.params.id, {$set: req.body}, { new: true, upsert: true });        
+
+        res.json(item);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
 });
 
 module.exports = router;
