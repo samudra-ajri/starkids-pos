@@ -3,7 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { login } from '../../actions/auth';
-import { Container } from 'semantic-ui-react';
+import { Container, Icon, Card, Form, Button } from 'semantic-ui-react';
 
 const Login = ({ login, isAuthenticated }) => {
   const [formData, setFormData] = useState({
@@ -27,37 +27,38 @@ const Login = ({ login, isAuthenticated }) => {
 
   return (
     <Fragment>
-      <Container>
-      <h1 className="large text-primary">Sign In</h1>
-      <p className="lead">
-        <i className="fas fa-user" /> Sign Into Your Account
-      </p>
-      <form className="form" onSubmit={onSubmit}>
-        <div className="form-group">
-          <input
-            type="email"
-            placeholder="Email Address"
-            name="email"
-            value={email}
-            onChange={onChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <input
-            type="password"
-            placeholder="Password"
-            name="password"
-            value={password}
-            onChange={onChange}
-            minLength="6"
-          />
-        </div>
-        <input type="submit" className="btn btn-primary" value="Login" />
-      </form>
-      <p className="my-1">
-        Don't have an account? <Link to="/register">Sign Up</Link>
-      </p>
+      <Container textAlign='center' style={{paddingTop: '1px', paddingBottom: '1px'}}>
+        <Card centered>
+          <Card.Content>
+          <Icon name='user circle' size='huge' color='teal'/>
+          <h1 style={{color:'teal', marginTop: '5px'}}>Sign In</h1>
+            <Form onSubmit={onSubmit} id="login-form">
+                <Form.Field>
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    name="email"
+                    value={email}
+                    onChange={onChange}
+                    required
+                  />
+                </Form.Field>
+                <Form.Field>
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    value={password}
+                    onChange={onChange}
+                    minLength="6"
+                  />
+                </Form.Field>
+            </Form>
+            <br/>
+            <small> Don't have an account? <Link to="/register">Sign Up</Link> </small>
+          </Card.Content>
+          <Button form="login-form" color='teal' type='submit'>Login</Button>
+        </Card>
       </Container>
     </Fragment>
   );

@@ -101,10 +101,7 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
 // @desc     Update a customer
 // @access   Private
 router.put('/:id', [auth, checkObjectId('id'), [
-        check('name', 'Name is required').not().isEmpty(),
-        check('email', 'Please include a valid email').isEmail(),
-        check('phone', 'Please include a valid phone number').isInt({ gt: 0 }),
-        check('debt', 'Please include a valid value').isInt()
+        check('name', 'Name is required').not().isEmpty()
     ]], async (req, res) => {
 
         const errors = validationResult(req);
@@ -122,5 +119,19 @@ router.put('/:id', [auth, checkObjectId('id'), [
         }
     }
 );
+
+// @route    PATCH api/customers/:id
+// @desc     Update body document
+// @access   Private
+router.patch('/:id', [auth, checkObjectId('id')], async (req, res) => {
+    try {
+        const item= await Customer.findByIdAndUpdate(req.params.id, {$set: req.body}, { new: true, upsert: true });        
+
+        res.json(item);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
 
 module.exports = router;

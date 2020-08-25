@@ -1,20 +1,38 @@
-import React, { Fragment, useState } from 'react';
-import { Button, Form, Container } from 'semantic-ui-react';
+import React, { Fragment, useState, useEffect } from 'react';
+import { Button, Form, Menu, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { createItem } from '../../actions/items';
+import { createItem, getItem } from '../../actions/items';
 import { addImage } from '../../actions/fileUpload';
 
-const CreateItem = ({ createItem, addImage }) => {
-    const initialState = {
-        name: '',
-        quantity: '',
-        retail: '',
-        wholesale: '',
-        image: 'default.jpg'
-    }
+
+const initialState = {
+    name: '',
+    quantity: '',
+    retail: '',
+    wholesale: '',
+    image: 'default.jpg'
+}
+
+const CreateItem = ({ createItem, addImage, getItem, history, item:{item, editID, loading} }) => {
+    
     const [formData, setFormData] = useState(initialState);
+
+    useEffect(() => {
+        if (!item) getItem(editID);
+        if (!loading && item) {
+            const profileData = { ...initialState };
+            for (const key in item) {
+                if (key in profileData) profileData[key] = item[key];
+            }
+            for (const key in item.price) {
+                if (key in profileData) profileData[key] = item.price[key];
+            }
+            setFormData(profileData);
+        }
+    }, [loading, getItem, editID, item]);
+
     const { name, quantity, retail, wholesale } = formData;
 
     const onChange = e => {
@@ -28,16 +46,22 @@ const CreateItem = ({ createItem, addImage }) => {
         setFormData({ ...formData, [e.target.name]: name+'_'+e.target.files[0].name });
     }
 
+    console.log(formData);
+
     const onSubmit = async e => {
         e.preventDefault();
         addImage(file, name);
-        createItem(formData);
+        createItem(formData, editID, history);
     }
 
     return (
         <Fragment>
-            <Container>
-            <h1>Tambah Produk</h1>
+            <Menu.Item position="right" href="/dashboard/produk">
+                <Icon name="arrow left" size="large" />
+            </Menu.Item>
+            <h3> 
+                { editID === 'false' ? 'Tambah ' : 'Update ' }Produk
+            </h3>
             <Form style={{paddingBottom:'3rem'}} onSubmit={onSubmit}>
                 <Form.Field>
                     <label>Nama Produk</label>
@@ -94,16 +118,21 @@ const CreateItem = ({ createItem, addImage }) => {
                         onChange={onChangeFile}
                     />
                 </Form.Field>
-                <Button primary type='submit'>Submit</Button>
+                <Button primary type='submit'>{ editID === 'false' ? 'Tambah' : 'Update' }</Button>
             </Form>
-            </Container>
         </Fragment>
     )
 };
 
 CreateItem.propTypes = {
     createItem: PropTypes.func.isRequired,
-    addImage: PropTypes.func.isRequired
+    getItem: PropTypes.func.isRequired,
+    addImage: PropTypes.func.isRequired,
+    item: PropTypes.object.isRequired
 };
 
-export default connect(null, { createItem, addImage })(CreateItem);
+const mapStateToProps = state => ({
+    item: state.item
+});
+
+export default connect(mapStateToProps, { createItem, addImage, getItem })(CreateItem);

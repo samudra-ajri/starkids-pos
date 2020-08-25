@@ -1,6 +1,7 @@
 import {
     GET_ITEM,
     GET_ITEMS,
+    EDIT_ITEM,
     ERROR_ITEM,
     CLEAR_ITEM,
     IMAGE_ITEM
@@ -11,6 +12,7 @@ import {
     items: [],
     loading: true,
     file: null,
+    editID: 'false',
     error: {}
   };
 
@@ -28,6 +30,12 @@ import {
         return {
           ...state,
           item: payload,
+          loading: false
+        };
+      case EDIT_ITEM:
+        return {
+          ...state,
+          editID: payload,
           loading: false
         };
       case GET_ITEMS:

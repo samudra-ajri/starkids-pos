@@ -1,34 +1,55 @@
-import React, { Fragment, useState } from 'react';
-import { Button, Form, Container } from 'semantic-ui-react';
+import React, { Fragment, useState,useEffect } from 'react';
+import { Button, Form, Icon, Menu } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { createCustomer } from '../../actions/customers';
+import { createCustomer, getCustomer } from '../../actions/customers';
 
-const CreateCustomer = ({ createCustomer, history }) => {
-    const initialState = {
-        name: '',
-        email: '',
-        address: '',
-        phone: '',
-        debt: 0
-    }
+const initialState = {
+    name: '',
+    email: '',
+    address: '',
+    phone: '',
+    debt: 0
+};
+
+const CreateCustomer = ({ createCustomer, getCustomer, history, customer:{customer, editID, loading} }) => {
+    
     const [formData, setFormData] = useState(initialState);
+    
+    useEffect(() => {
+        if (!customer) getCustomer(editID);
+        if (!loading && customer) {
+            const profileData = { ...initialState };
+            for (const key in customer) {
+                if (key in profileData) profileData[key] = customer[key];
+            }
+            setFormData(profileData);
+        }
+    }, [loading, getCustomer, editID, customer]);
+    
     const { name, email, address, phone, debt } = formData;
-
+    
     const onChange = e => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
-
+    
     const onSubmit = async e => {
         e.preventDefault();
-        createCustomer(formData, history);
+        createCustomer(formData, editID, history);
     }
-
+    
+    console.log(formData);
+    
     return (
         <Fragment>
-            <Container>
-            <h1>Tambah Pelanggan</h1>
+            
+            <Menu.Item position="right" href="/dashboard/pelanggan">
+                <Icon name="arrow left" size="large" />
+            </Menu.Item>
+            <h3>
+                { editID === 'false' ? 'Tambah ' : 'Update ' }Pelanggan
+            </h3>
             <Form style={{paddingBottom:'3rem'}} onSubmit={onSubmit}>
                 <Form.Field>
                     <label>Nama</label>
@@ -82,15 +103,22 @@ const CreateCustomer = ({ createCustomer, history }) => {
                     />
                     <small>cth: 15000</small>
                 </Form.Field>
-                <Button primary type='submit'>Submit</Button>
+                <div>
+                    <Button primary type='submit'>{ editID === 'false' ? 'Tambah' : 'Update' }</Button>
+                </div>
             </Form>
-            </Container>
         </Fragment>
     )
 };
 
 CreateCustomer.propTypes = {
-    createCustomer: PropTypes.func.isRequired
+    createCustomer: PropTypes.func.isRequired,
+    getCustomer: PropTypes.func.isRequired,
+    customer: PropTypes.object.isRequired
 };
 
-export default connect(null, { createCustomer })(CreateCustomer);
+const mapStateToProps = state => ({
+    customer: state.customer
+});
+
+export default connect(mapStateToProps, { createCustomer, getCustomer })(CreateCustomer);

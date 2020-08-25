@@ -84,9 +84,9 @@ export const createTransaction = (formData, history, sent=false) => async dispat
 };
 
 // Get all transactions with complete attributes
-export const getTransactions = () => async dispatch => {
+export const getTransactions = (page) => async dispatch => {
   try {
-    const res = await api.get('/transactions');
+    const res = await api.get(`/transactions?page=${page}&pagination=20`);
 
     dispatch({
       type: GET_TRANSACTIONS,
@@ -110,7 +110,7 @@ export const getTransactions = () => async dispatch => {
 // Get all transactions in date range
 export const getRangeTransactions = (from, to) => async dispatch => {
   try {
-    const res = await api.get(`/transactions/${from}/to/${to}`);
+    const res = await api.get(`/transactions?from=${from}&to=${to}&page=1&pagination=20`);
 
     dispatch({
       type: GET_TRANSACTIONS,

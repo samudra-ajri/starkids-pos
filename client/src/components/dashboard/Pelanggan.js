@@ -1,17 +1,92 @@
-import React, { Fragment } from 'react';
-import { Icon, Button} from 'semantic-ui-react';
+import React, { Fragment, useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { Icon, Button, Table } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
 
-const Pelanggan = () => {
+import Spinner from '../layout/Spinner';
+import { getCustomers, getEditID } from '../../actions/customers';
+
+
+const Pelanggan = ({ getCustomers, getEditID, customers: {loading, customers}}) => {
+
+    useEffect(() => {
+        getCustomers();
+    }, [getCustomers]);
+
+    customers.sort(function(a, b){
+        var x = a.name.toLowerCase();
+        var y = b.name.toLowerCase();
+        if (x < y) {return -1;}
+        if (x > y) {return 1;}
+        return 0;
+    });
+
+    const onClick = (e, {id}) => {
+        getEditID(id);
+    };
+
+
+    const renderCustomer = customer => {
+        return (
+            <Table.Body key={customer._id}>
+                <Table.Row>
+                    <Table.Cell>{customer.name}</Table.Cell>
+                    <Table.Cell>{customer.email}</Table.Cell>
+                    <Table.Cell>{customer.address}</Table.Cell>
+                    <Table.Cell>{customer.phone}</Table.Cell>
+                    <Table.Cell>{customer.debt}</Table.Cell>
+                    <Table.Cell>
+                        <Button as={Link} to='/dashboard/pelanggan/create-customer' icon style={{backgroundColor:'transparent', padding:'0px'}} id={customer._id} onClick={onClick}>
+                            <Icon name='edit outline' size='large' />
+                        </Button>
+                        <Button as={Link} to='/dashboard/pelanggan/info' icon style={{backgroundColor:'transparent', padding:'0px'}} id={customer._id} onClick={onClick}>
+                            <Icon name='arrow right' size='large' color='teal' />
+                        </Button>
+                    </Table.Cell>
+                </Table.Row>
+            </Table.Body>
+        );
+    }
+
     return (
         <Fragment>
             <h3 style={{flexGrow:'0'}}>Daftar Pelanggan</h3>
             <div>
-                <Button href='/create-customer' icon labelPosition='left' color='twitter'>
-                    <Icon name='user plus' /> Tabmbah Pelanggan
+                <Button as={Link} to='/dashboard/pelanggan/create-customer' icon labelPosition='left' color='twitter'>
+                    <Icon name='user plus' /> Tambah Pelanggan
                 </Button>
+                <br/><br/>
+                {loading ? <Spinner /> : (
+                    <Fragment>
+                        <Table basic='very' compact>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>Nama</Table.HeaderCell>
+                                    <Table.HeaderCell>Email</Table.HeaderCell>
+                                    <Table.HeaderCell>Alamat</Table.HeaderCell>
+                                    <Table.HeaderCell>Telp/HP</Table.HeaderCell>
+                                    <Table.HeaderCell>Piutang</Table.HeaderCell>
+                                    <Table.HeaderCell></Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            {customers.map(customer => (renderCustomer(customer)))}
+                        </Table>
+                    </Fragment>
+                )}
             </div>
         </Fragment>
     );
 };
 
-export default Pelanggan;
+Pelanggan.propTypes = {
+    getCustomers: PropTypes.func.isRequired,
+    getEditID: PropTypes.func.isRequired,
+    customers: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    customers: state.customer
+});
+
+export default connect(mapStateToProps, { getCustomers, getEditID })(Pelanggan);

@@ -2,12 +2,13 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Button, Form, Image, Card, Icon, Container } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
-import { getCustomers } from '../../actions/customers';
+import { getCustomers, patchDebt } from '../../actions/customers';
 import { cleanBasket, createTransaction } from '../../actions/transactions';
 import { patchQuantity } from '../../actions/items';
 
-const Transaction = ({ basket, getCustomers, customers, cleanBasket, createTransaction, patchQuantity, history }) => {
+const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, cleanBasket, createTransaction, patchQuantity, history }) => {
     useEffect(() => {
         getCustomers();
     }, [getCustomers]);
@@ -27,7 +28,7 @@ const Transaction = ({ basket, getCustomers, customers, cleanBasket, createTrans
         initialState['ttl_'+item._id] = item.price.retail;
     });
     
-    initialState['customer'] = '';
+    initialState['customer'] = '5f42206e4398bc7741e47983';
     initialState['payment_type'] = 'tunai';
     initialState['stuff'] = basket;
     initialState['total'] = 0;
@@ -63,6 +64,7 @@ const Transaction = ({ basket, getCustomers, customers, cleanBasket, createTrans
     const onSubmit = async e => {
         e.preventDefault();
         
+        // Update quantity of items
         let leftQty = 0;
         const completeStuff = [];
         formData['stuff'].forEach(item => {
@@ -79,6 +81,29 @@ const Transaction = ({ basket, getCustomers, customers, cleanBasket, createTrans
             patchQuantity({ 'quantity': leftQty }, item._id);
         });
 
+        // Update debt of the customer
+        let debt = 0; let i = 0;
+        if (formData['payment_type'] === 'pelunasan') {
+            for(i = 0; i < customers.length; i++) {
+                if (customers[i]._id === formData['customer']) {
+                    debt = customers[i].debt;
+                    break;
+                }
+            }
+            debt -= formData['total'];
+            patchDebt({'debt':debt}, formData['customer']);
+        } else if (formData['payment_type'] === 'angsur') {
+            for(i = 0; i < customers.length; i++) {
+                if (customers[i]._id === formData['customer']) {
+                    debt = customers[i].debt;
+                    break;
+                }
+            }
+            debt += formData['total'];
+            patchDebt({'debt':debt}, formData['customer']);
+        }
+
+        // Create transaction
         const finalData = {
             customer: formData['customer'],
             payment_type: formData['payment_type'],
@@ -109,6 +134,7 @@ const Transaction = ({ basket, getCustomers, customers, cleanBasket, createTrans
                                 control='input'
                                 name={'rd_'+item._id}
                                 onChange={onChange}
+                                required
                             />
                             <Form.Field
                                 type='radio'
@@ -117,7 +143,6 @@ const Transaction = ({ basket, getCustomers, customers, cleanBasket, createTrans
                                 control='input'
                                 name={'rd_'+item._id}
                                 onChange={onChange}
-                                required
                             />
                         </Form.Group>
                         <input
@@ -161,7 +186,6 @@ const Transaction = ({ basket, getCustomers, customers, cleanBasket, createTrans
                         onChange={onChange}
                         required
                     >
-                        <option value='Umum'>Umum</option>
                         {customers.map(customer => { 
                             return <option key={customer._id} value={customer._id}>{customer.name}</option>
                         })}
@@ -191,7 +215,10 @@ const Transaction = ({ basket, getCustomers, customers, cleanBasket, createTrans
                         disabled={payment_type === 'pelunasan' ? false : true}
                     />
                 </Form.Field>
-                <Button primary type='submit'>Submit</Button>
+                <div>
+                    <Button as={Link} to='/'>Kembali</Button>
+                    <Button primary type='submit'>Submit</Button>
+                </div>
             </Form>
             </Container>
         </Fragment>
@@ -200,8 +227,9 @@ const Transaction = ({ basket, getCustomers, customers, cleanBasket, createTrans
 
 Transaction.propTypes = {
     basket: PropTypes.array.isRequired,
-    customers: PropTypes.array.isRequired,
+    customers: PropTypes.object.isRequired,
     getCustomers: PropTypes.func.isRequired,
+    patchDebt: PropTypes.func.isRequired,
     cleanBasket: PropTypes.func.isRequired,
     createTransaction: PropTypes.func.isRequired,
     patchQuantity: PropTypes.func.isRequired
@@ -209,7 +237,7 @@ Transaction.propTypes = {
 
 const mapStateToProps = state => ({
     basket: state.transaction.transactions,
-    customers: state.customer.customers
+    customers: state.customer
 });
 
-export default connect(mapStateToProps, { getCustomers, cleanBasket, createTransaction, patchQuantity })(Transaction);
+export default connect(mapStateToProps, { getCustomers, patchDebt, cleanBasket, createTransaction, patchQuantity })(Transaction);

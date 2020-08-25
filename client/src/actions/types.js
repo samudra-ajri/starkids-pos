@@ -14,6 +14,7 @@ export const GET_ITEMS = 'GET_ITEMS';
 export const ERROR_ITEM = 'ERROR_ITEMS';
 export const CLEAR_ITEM = 'CLEAR_ITEM';
 export const IMAGE_ITEM = 'IMAGE_ITEM';
+export const EDIT_ITEM = 'EDIT_ITEM';
 
 export const BASKET_TRANSACTIONS = 'GET_TRANSACTION';
 export const GET_TRANSACTIONS = 'GET_TRANSACTIONS';
@@ -22,5 +23,8 @@ export const ERROR_TRANSACTION = 'ERROR_TRANSACTIONS';
 export const CLEAR_TRANSACTION = 'CLEAR_TRANSACTION';
 
 export const GET_CUSTOMERS = 'GET_CUSTOMERS';
+export const GET_CUSTOMER = 'GET_CUSTOMER';
+export const UPDATE_CUSTOMER = 'UPDATE_CUSTOMER';
+export const IS_EDIT = 'IS_EDIT';
 export const ERROR_CUSTOMER = 'ERROR_CUSTOMER';
 export const CLEAR_CUSTOMER = 'CLEAR_CUSTOMER';

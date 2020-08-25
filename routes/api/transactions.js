@@ -11,9 +11,9 @@ const checkObjectId = require('../../middleware/checkObjectId');
 // @desc     Create transaction
 // @access   Private
 router.post('/', [auth, [
-        check('customer', 'Calid customer is required').not().isEmpty().isMongoId(),
+        check('customer', 'Customer is required').not().isEmpty().isMongoId(),
         check('payment_type', 'Please include a valid payment type').not().isEmpty(),
-        check('total', 'Please include a valid payment type').isInt({ gt:0 })
+        check('total', 'Please include a valid total payment').isInt({ gt:0 })
     ]],
     async (req, res) => {
         const errors = validationResult(req);
@@ -52,15 +52,38 @@ router.post('/', [auth, [
 // @access   Private
 router.get('/', auth, async (req, res) => {
     try {
-        const transactions = await Transaction.find().populate({
+        const from = req.query.from;
+        const fromDate = new Date(req.query.from);
+        const to = req.query.to;
+        const toDate = new Date(req.query.to);
+        const toPlusOne = toDate.setDate(toDate.getDate()+1);
+
+        const match = {}
+        if (from && to) {
+            match.date = { '$gte':fromDate, '$lte':toPlusOne }
+        } else if (from) {
+            match.date = { '$gte':fromDate }
+        } else if (to) {
+            match.date = { '$lte':toPlusOne }
+        }
+
+        const pagination = req.query.pagination && parseInt(req.query.pagination);
+        const page = req.query.page && parseInt(req.query.page);
+
+        const transactions = await Transaction.find( match )
+        .skip((page - 1) * pagination)
+        .limit(pagination)
+        .populate({
             path:'customer',
             model:'customer',
             select:'name'
-        }).populate({
+        })
+        .populate({
             path:'stuff.item',
             model:'item',
             select:'name'
-        });
+        })
+        .sort({ date: -1 });
         res.json(transactions);
     } catch (err) {
         console.error(err.message);
@@ -129,32 +152,6 @@ router.put('/:id', [auth, checkObjectId('id'), [
             res.status(500).send('Server Error');
         }
     }
-);
-
-// @route    GET api/transactions/:from/to/:to
-// @desc     Find transactions betwen 2 dates
-// @access   Private
-router.get('/:from/to/:to', auth, async (req, res) => {
-    const from = new Date(req.params.from);
-    const to = new Date(req.params.to);
-    const toPlusOne = to.setDate(to.getDate()+1);
-    try {
-        const found = await Transaction.find({"date":{ '$gte':from, '$lte':toPlusOne }}).populate({
-            path:'customer',
-            model:'customer',
-            select:'name'
-        }).populate({
-            path:'stuff.item',
-            model:'item',
-            select:'name'
-        });;
-        
-        res.json(found);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
-    }
-}
 );
 
 module.exports = router;

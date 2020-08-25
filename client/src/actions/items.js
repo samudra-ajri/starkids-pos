@@ -5,23 +5,52 @@ import {
   GET_ITEM,
   GET_ITEMS,
   ERROR_ITEM,
-  CLEAR_ITEM
+  CLEAR_ITEM,
+  EDIT_ITEM
 } from './types';
 
 // Create an item
-export const createItem = (formData) => async dispatch => {
+export const createItem = (formData, itemID, history) => async dispatch => {
   try {
-    const res = await api.post('/items', formData);
+    if (itemID !== 'false') {
+      await api.put(`/items/${itemID}`, formData);
+      dispatch(setAlert('Perubahan Data Berhasil', 'success'));
+      dispatch({ type: CLEAR_ITEM });
+    } else {
+      await api.post('/items', formData);
+      dispatch(setAlert('Produk Berhasil Ditambahkan', 'success'));
+    }
+
+    history.push('/dashboard/produk');
+
+    dispatch(setAlert('Product Created', 'success'));
+
+  } catch (err) {
+    const errors = err.response.data.errors;
+
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    }
+
+    dispatch({
+      type: ERROR_ITEM,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Get item by ID
+export const getItem = (itemID) => async dispatch => {
+  try {
+    const res = await api.get(`/items/${itemID}`);
 
     dispatch({
       type: GET_ITEM,
       payload: res.data
     });
 
-    dispatch(setAlert('Product Created', 'success'));
-
   } catch (err) {
-    const errors = err.response.data.errors;
+      const errors = err.response.data.errors;
 
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
@@ -55,16 +84,43 @@ export const getItems = () => async dispatch => {
 
 // Update item quantity
 export const patchQuantity = (body, itemID) => async dispatch => {
+  let updatedBody = body;
+  updatedBody.date = Date.now();
+
   dispatch({ type: CLEAR_ITEM });
 
   try {
-    const res = await api.patch(`/items/${itemID}`, body);
+    const res = await api.patch(`/items/${itemID}`, updatedBody);
 
     dispatch({
       type: GET_ITEM,
       payload: res.data
     });
   } catch (err) {
+    dispatch({
+      type: ERROR_ITEM,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Get item editID
+export const getItemEditID = (itemID) => async dispatch => {
+  try {
+    dispatch({ type: CLEAR_ITEM });
+
+    dispatch({
+      type: EDIT_ITEM,
+      payload: itemID
+    });
+
+  } catch (err) {
+      const errors = err.response.data.errors;
+
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    }
+
     dispatch({
       type: ERROR_ITEM,
       payload: { msg: err.response.statusText, status: err.response.status }
