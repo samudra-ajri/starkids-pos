@@ -9,7 +9,9 @@ import { addImage } from '../../actions/fileUpload';
 
 const initialState = {
     name: '',
-    quantity: '',
+    unit: 'kodi',
+    addquantity: 0,
+    quantity: 0,
     retail: '',
     wholesale: '',
     image: 'default.jpg'
@@ -33,10 +35,16 @@ const CreateItem = ({ createItem, addImage, getItem, history, item:{item, editID
         }
     }, [loading, getItem, editID, item]);
 
-    const { name, quantity, retail, wholesale } = formData;
+    let { name, unit, addquantity, quantity, retail, wholesale } = formData;
 
     const onChange = e => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
+
+    if (unit === 'kodi') {
+        quantity += addquantity * 20; 
+    } else {
+        quantity += addquantity * 1;
     }
 
     const [file, setFile] = useState('');
@@ -46,11 +54,10 @@ const CreateItem = ({ createItem, addImage, getItem, history, item:{item, editID
         setFormData({ ...formData, [e.target.name]: name+'_'+e.target.files[0].name });
     }
 
-    console.log(formData);
-
     const onSubmit = async e => {
         e.preventDefault();
-        addImage(file, name);
+        formData.quantity = quantity;
+        if (formData.image !== 'default.jpg') addImage(file, name);
         createItem(formData, editID, history);
     }
 
@@ -60,7 +67,7 @@ const CreateItem = ({ createItem, addImage, getItem, history, item:{item, editID
                 <Icon name="arrow left" size="large" />
             </Menu.Item>
             <h3> 
-                { editID === 'false' ? 'Tambah ' : 'Update ' }Produk
+                { editID ? 'Update ' : 'Tambah ' }Produk
             </h3>
             <Form style={{paddingBottom:'3rem'}} onSubmit={onSubmit}>
                 <Form.Field>
@@ -75,7 +82,39 @@ const CreateItem = ({ createItem, addImage, getItem, history, item:{item, editID
                     />
                 </Form.Field>
                 <Form.Field>
-                    <label>Jumlah Stok</label>
+                    <label>Tambah Stok</label>
+                    <Form.Group>
+                        <Form.Field
+                            type='radio'
+                            name='unit'
+                            label='Kodi'
+                            value='kodi'
+                            control='input'
+                            onChange={onChange}
+                            required={editID ? false : true}
+                        />
+                        <Form.Field
+                            type='radio'
+                            name='unit'
+                            label='Satuan'
+                            value='satuan'
+                            control='input'
+                            onChange={onChange}
+                        />
+                    </Form.Group>
+                </Form.Field>
+                <Form.Field>
+                    <input 
+                        type="number"
+                        placeholder='Tambah Stok'
+                        name="addquantity"
+                        value={addquantity}
+                        onChange={onChange}
+                        required={editID ? false : true}
+                    />
+                </Form.Field>
+                <Form.Field>
+                    <label>Jumlah Stok (pcs)</label>
                     <input 
                         type="number"
                         placeholder='Jumlah Stok'
@@ -83,6 +122,7 @@ const CreateItem = ({ createItem, addImage, getItem, history, item:{item, editID
                         value={quantity}
                         onChange={onChange}
                         required
+                        disabled
                     />
                 </Form.Field>
                 <Form.Field>
@@ -118,7 +158,7 @@ const CreateItem = ({ createItem, addImage, getItem, history, item:{item, editID
                         onChange={onChangeFile}
                     />
                 </Form.Field>
-                <Button primary type='submit'>{ editID === 'false' ? 'Tambah' : 'Update' }</Button>
+                <Button primary type='submit'>{ editID ? 'Update' : 'Tambah' }</Button>
             </Form>
         </Fragment>
     )

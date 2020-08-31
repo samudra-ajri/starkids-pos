@@ -3,42 +3,40 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 
-import { Form, Button, Icon, Table, Dropdown } from 'semantic-ui-react';
+import { Form, Table, Dropdown, Pagination, Container } from 'semantic-ui-react';
 
 import Spinner from '../layout/Spinner';
-import { getTransactions, getRangeTransactions } from '../../actions/transactions';
+import { getTransactions} from '../../actions/transactions';
 
-const Transaksi = ({ getTransactions, getRangeTransactions, transactions:{completeTransactions, loading} }) => {
-    const [page, setPage] = useState(1);
-    const [data, setData] = useState([]);
- 
-    useEffect(() => {
-        if (completeTransactions.length === 0) getTransactions(page);
-        if (!loading && completeTransactions.length !== 0) {
-            setData([...data, ...completeTransactions])
-            console.log(data, completeTransactions);
-            loading = true;
-        }
-    }, [loading, getTransactions, completeTransactions, data, page]);
-
-
+const Transaksi = ({ getTransactions, transactions:{completeTransactions, loading} }) => {
+    
     const [dateRange, setDateRange] = useState({from: '', to: ''})
-    const { from, to } = dateRange;
     const onChange = e => {
         setDateRange({ ...dateRange, [e.target.name]:e.target.value });
     }
+    const { from, to } = dateRange;
+
+    const [pagination, setPagination] = useState({page: 1, totalPages:1000});
+    
+    const onPageChange = (e, {activePage}) => {
+        if (page !== 1 && completeTransactions.length === 0){
+            setPagination({ ...pagination, ['page']:1 });
+        } else if (activePage !== 1 && completeTransactions.length !== 0) {
+            setPagination({ ...pagination, ['page']:activePage });
+        }
+    }
+    const {page, totalPages} = pagination;
+
+    useEffect(() => {
+        getTransactions(from, to, page, '');
+    }, [getTransactions, from, to, page]);
 
     const laba = {omzet: '', piutang: '', pelunasan: ''};
     let { omzet, piutang, pelunasan } = laba;
 
-    const onSubmit = async e => {
-        e.preventDefault();
-        getRangeTransactions(from, to);
-    }
-
-    if (from !== '' && to !== '') {
+    if (from !== '' || to !== '') {
         omzet = 0; pelunasan = 0; piutang = 0;
-        data.forEach(transaction => {
+        completeTransactions.forEach(transaction => {
             if (transaction.payment_type !== 'pelunasan') {
                 omzet += transaction.total;
                 if (transaction.payment_type === 'angsur') {
@@ -75,8 +73,8 @@ const Transaksi = ({ getTransactions, getRangeTransactions, transactions:{comple
     }
 
     return (
-        <Fragment>
-            <Form onSubmit={onSubmit}>
+        <Fragment >
+            <Form>
                 <h3>Riwayat Transaksi</h3>
                 <Form.Group>
                     <Form.Field width='3'>
@@ -101,14 +99,11 @@ const Transaksi = ({ getTransactions, getRangeTransactions, transactions:{comple
                             required 
                         />
                     </Form.Field>
-                    <Button icon type='submit' style={{backgroundColor:'transparent', paddingTop:'30px'}} >
-                        <Icon name='arrow circle right' size='large' color='teal' />
-                    </Button>
                 </Form.Group>
             </Form>
             {loading ? <Spinner /> : (
                 <Fragment>
-                    <Table basic='very' compact collapsing key={data._id}>
+                    <Table basic='very' compact collapsing key={completeTransactions._id}>
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>Omzet</Table.HeaderCell>
@@ -134,8 +129,20 @@ const Transaksi = ({ getTransactions, getRangeTransactions, transactions:{comple
                                 <Table.HeaderCell>Jenis</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
-                        {data.map(transaction => (renderTransaction(transaction)))}
+                        {completeTransactions.map(transaction => (renderTransaction(transaction)))}
                     </Table>
+                   <Container textAlign='center' style={{marginTop:'0px'}}>
+                    <Pagination
+                        boundaryRange={0}
+                        activePage={page}
+                        ellipsisItem={null}
+                        firstItem={null}
+                        lastItem={null}
+                        siblingRange={1}
+                        totalPages={totalPages}
+                        onPageChange={onPageChange}
+                    />
+                    </Container>
                 </Fragment>
             )}
         </Fragment>
@@ -144,7 +151,6 @@ const Transaksi = ({ getTransactions, getRangeTransactions, transactions:{comple
 
 Transaksi.propTypes = {
     getTransactions: PropTypes.func.isRequired,
-    getRangeTransactions: PropTypes.func.isRequired,
     transactions: PropTypes.object.isRequired
   };
 
@@ -152,4 +158,4 @@ const mapStateToProps = state => ({
     transactions: state.transaction,
   });
 
-export default connect(mapStateToProps, { getTransactions, getRangeTransactions })(Transaksi);
+export default connect(mapStateToProps, { getTransactions })(Transaksi);

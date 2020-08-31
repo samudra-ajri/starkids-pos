@@ -1,15 +1,14 @@
 import {
-    GET_CUSTOMERS,
-    GET_CUSTOMER,
-    UPDATE_CUSTOMER,
-    IS_EDIT,
-    ERROR_CUSTOMER,
-    CLEAR_CUSTOMER
+    GET_MATERIAL,
+    GET_MATERIALS,
+    ERROR_MATERIAL,
+    CLEAR_MATERIAL,
+    EDIT_MATERIAL
   } from '../actions/types';
 
   const initialState = {
-    customer: null,
-    customers: [],
+    material: null,
+    materials: [],
     loading: true,
     editID: '',
     error: {}
@@ -19,43 +18,35 @@ import {
     const { type, payload } = action;
   
     switch (type) {
-      case GET_CUSTOMERS:
+      case GET_MATERIAL:
         return {
           ...state,
-          customers: payload,
+          material: payload,
           loading: false
         };
-        case GET_CUSTOMER:
-          return {
-            ...state,
-            customer: payload,
-            loading: false
-          };
-      case UPDATE_CUSTOMER:
-        return {
-          ...state,
-          customer: payload,
-          loading: false
-        };
-      case IS_EDIT:
+      case EDIT_MATERIAL:
         return {
           ...state,
           editID: payload,
           loading: false
         };
-      case ERROR_CUSTOMER:
+      case GET_MATERIALS:
+        return {
+          ...state,
+          materials: payload,
+          loading: false
+        };
+      case ERROR_MATERIAL:
         return {
           ...state,
           error: payload,
           loading: false,
-          editID: 'false',
-          customer: null
+          material: null
         };
-      case CLEAR_CUSTOMER:
+      case CLEAR_MATERIAL:
         return {
           ...state,
-          editID: 'false',
-          customer: null
+          material: null
         };
       default:
         return state;

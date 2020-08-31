@@ -7,10 +7,14 @@ import Sidebar from './Sidebar';
 import Transaksi from './Transaksi';
 import Produk from './Produk';
 import Pelanggan from './Pelanggan';
-import Gudang from './Gudang';
 import CreateItem from '../items/CreateItem';
 import CreateCustomer from '../customers/CreateCustomer';
 import CustomerInfo from '../customers/CustomerInfo';
+import BahanBaku from './BahanBaku';
+import CreateMaterial from '../materials/CreateMaterial';
+
+import TransactionsScroll from './TransactionsScroll';
+
 
 
 const Dashboard = () => {
@@ -28,12 +32,18 @@ const Dashboard = () => {
                         <Switch>
                             <Route exact path="/dashboard" component={Transaksi} />
                             <PrivateRoute exact path="/dashboard/transaksi" component={Transaksi} />
+                            
                             <PrivateRoute exact path="/dashboard/produk" component={Produk} />
                             <PrivateRoute exact path="/dashboard/produk/create-item" component={CreateItem} />
-                            <PrivateRoute exact path="/dashboard/gudang" component={Gudang} />
+
                             <PrivateRoute exact path="/dashboard/pelanggan" component={Pelanggan} />
                             <PrivateRoute exact path="/dashboard/pelanggan/create-customer" component={CreateCustomer} />
                             <PrivateRoute exact path="/dashboard/pelanggan/info" component={CustomerInfo} />
+
+                            <PrivateRoute exact path="/dashboard/bahan-baku" component={BahanBaku} />
+                            <PrivateRoute exact path="/dashboard/bahan-baku/create-material" component={CreateMaterial} />
+
+                            <PrivateRoute exact path="/dashboard/transaksi-scroll" component={TransactionsScroll} />
                         </Switch>
                     </Grid.Column>
                 </Grid>

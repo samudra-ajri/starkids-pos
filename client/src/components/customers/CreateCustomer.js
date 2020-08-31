@@ -39,8 +39,6 @@ const CreateCustomer = ({ createCustomer, getCustomer, history, customer:{custom
         createCustomer(formData, editID, history);
     }
     
-    console.log(formData);
-    
     return (
         <Fragment>
             
@@ -48,7 +46,7 @@ const CreateCustomer = ({ createCustomer, getCustomer, history, customer:{custom
                 <Icon name="arrow left" size="large" />
             </Menu.Item>
             <h3>
-                { editID === 'false' ? 'Tambah ' : 'Update ' }Pelanggan
+                { !editID ? 'Tambah ' : 'Update ' }Pelanggan
             </h3>
             <Form style={{paddingBottom:'3rem'}} onSubmit={onSubmit}>
                 <Form.Field>
@@ -104,7 +102,7 @@ const CreateCustomer = ({ createCustomer, getCustomer, history, customer:{custom
                     <small>cth: 15000</small>
                 </Form.Field>
                 <div>
-                    <Button primary type='submit'>{ editID === 'false' ? 'Tambah' : 'Update' }</Button>
+                    <Button primary type='submit'>{ !editID ? 'Tambah' : 'Update' }</Button>
                 </div>
             </Form>
         </Fragment>

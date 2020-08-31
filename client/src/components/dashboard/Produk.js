@@ -15,13 +15,13 @@ const Produk = ({ getItems, getItemEditID, items: {loading, items}}) => {
         getItems();
     }, [getItems]);
 
-    items.sort(function(a, b){
-        var x = a.name.toLowerCase();
-        var y = b.name.toLowerCase();
-        if (x < y) {return -1;}
-        if (x > y) {return 1;}
-        return 0;
-    });
+    // items.sort(function(a, b){
+    //     var x = a.name.toLowerCase();
+    //     var y = b.name.toLowerCase();
+    //     if (x < y) {return -1;}
+    //     if (x > y) {return 1;}
+    //     return 0;
+    // });
 
     const onClick = (e, {id}) => {
         getItemEditID(id);

@@ -2,26 +2,26 @@ import api from '../utils/api';
 import { setAlert } from './alert';
 
 import {
-  GET_ITEM,
-  GET_ITEMS,
-  ERROR_ITEM,
-  CLEAR_ITEM,
-  EDIT_ITEM
+  GET_MATERIAL,
+  GET_MATERIALS,
+  ERROR_MATERIAL,
+  CLEAR_MATERIAL,
+  EDIT_MATERIAL
 } from './types';
 
-// Create an item
-export const createItem = (formData, itemID, history) => async dispatch => {
+// Create a material
+export const createMaterial = (formData, materialID, history) => async dispatch => {
   try {
-    if (itemID !== '') {
-      await api.put(`/items/${itemID}`, formData);
+    if (materialID !== '') {
+      await api.put(`/materials/${materialID}`, formData);
       dispatch(setAlert('Perubahan Data Berhasil', 'success'));
-      dispatch({ type: CLEAR_ITEM });
+      dispatch({ type: CLEAR_MATERIAL });
     } else {
-      await api.post('/items', formData);
-      dispatch(setAlert('Produk Berhasil Ditambahkan', 'success'));
+      await api.post('/materials', formData);
+      dispatch(setAlert('Bahan Baku Berhasil Ditambahkan', 'success'));
     }
 
-    history.push('/dashboard/produk');
+    history.push('/dashboard/bahan');
 
   } catch (err) {
     const errors = err.response.data.errors;
@@ -31,19 +31,19 @@ export const createItem = (formData, itemID, history) => async dispatch => {
     }
 
     dispatch({
-      type: ERROR_ITEM,
+      type: ERROR_MATERIAL,
       payload: { msg: err.response.statusText, status: err.response.status }
     });
   }
 };
 
-// Get item by ID
-export const getItem = (itemID) => async dispatch => {
+// Get material by ID
+export const getMaterial = (materialID) => async dispatch => {
   try {
-    const res = await api.get(`/items/${itemID}`);
+    const res = await api.get(`/materials/${materialID}`);
 
     dispatch({
-      type: GET_ITEM,
+      type: GET_MATERIAL,
       payload: res.data
     });
 
@@ -55,61 +55,60 @@ export const getItem = (itemID) => async dispatch => {
     }
 
     dispatch({
-      type: ERROR_ITEM,
+      type: ERROR_MATERIAL,
       payload: { msg: err.response.statusText, status: err.response.status }
     });
   }
 };
 
-// Get all items
-export const getItems = () => async dispatch => {
-  dispatch({ type: CLEAR_ITEM });
+// Get all materials
+export const getMaterials = () => async dispatch => {
+  dispatch({ type: CLEAR_MATERIAL });
 
   try {
-    const res = await api.get('/items');
+    const res = await api.get('/materials');
 
     dispatch({
-      type: GET_ITEMS,
+      type: GET_MATERIALS,
       payload: res.data
     });
   } catch (err) {
     dispatch({
-      type: ERROR_ITEM,
+      type: ERROR_MATERIAL,
       payload: { msg: err.response.statusText, status: err.response.status }
     });
   }
 };
 
-// Update item quantity
-export const patchQuantity = (body, itemID) => async dispatch => {
+// Update material quantity
+export const patchQuantity = (body, materialID) => async dispatch => {
   let updatedBody = body;
-  updatedBody.date = Date.now();
 
-  dispatch({ type: CLEAR_ITEM });
+  dispatch({ type: CLEAR_MATERIAL });
 
   try {
-    const res = await api.patch(`/items/${itemID}`, updatedBody);
+    const res = await api.patch(`/materials/${materialID}`, updatedBody);
 
     dispatch({
-      type: GET_ITEM,
+      type: GET_MATERIAL,
       payload: res.data
     });
   } catch (err) {
     dispatch({
-      type: ERROR_ITEM,
+      type: ERROR_MATERIAL,
       payload: { msg: err.response.statusText, status: err.response.status }
     });
   }
 };
 
-// Get item editID
-export const getItemEditID = (itemID) => async dispatch => {
+// Get material editID
+export const getMaterialEditID = (materialID) => async dispatch => {
   try {
-    dispatch({ type: CLEAR_ITEM });
+    dispatch({ type: CLEAR_MATERIAL });
 
     dispatch({
-      type: EDIT_ITEM,
-      payload: itemID
+      type: EDIT_MATERIAL,
+      payload: materialID
     });
 
   } catch (err) {

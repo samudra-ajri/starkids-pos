@@ -31,10 +31,10 @@ const Sidebar = () => {
                     as={Link} to='/dashboard/produk'
                 />
                 <Menu.Item
-                    name='gudang'
-                    active={activeItem === 'gudang'}
+                    name='bahan-baku'
+                    active={activeItem === 'bahan-baku'}
                     onClick={onClick}
-                    as={Link} to='/dashboard/gudang'
+                    as={Link} to='/dashboard/bahan-baku'
                 />
             </Menu>
         </Fragment>

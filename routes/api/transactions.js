@@ -67,6 +67,9 @@ router.get('/', auth, async (req, res) => {
             match.date = { '$lte':toPlusOne }
         }
 
+        const customer = req.query.customer && req.query.customer;
+        if (customer) match.customer = customer; 
+
         const pagination = req.query.pagination && parseInt(req.query.pagination);
         const page = req.query.page && parseInt(req.query.page);
 

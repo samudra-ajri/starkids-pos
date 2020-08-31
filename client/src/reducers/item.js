@@ -12,7 +12,7 @@ import {
     items: [],
     loading: true,
     file: null,
-    editID: 'false',
+    editID: '',
     error: {}
   };
 

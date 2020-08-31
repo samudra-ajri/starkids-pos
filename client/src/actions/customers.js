@@ -29,7 +29,7 @@ export const getCustomers = () => async dispatch => {
 // Create a customer
 export const createCustomer = (formData, customerID, history) => async dispatch => {
   try {
-    if (customerID !== 'false') {
+    if (customerID !== '') {
       await api.put(`/customers/${customerID}`, formData);
       dispatch(setAlert('Perubahan Data Berhasil', 'success'));
       dispatch({ type: CLEAR_CUSTOMER });

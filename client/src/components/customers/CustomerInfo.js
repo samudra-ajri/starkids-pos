@@ -3,42 +3,36 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 
-import { Form, Button, Icon, Table, Dropdown, Menu } from 'semantic-ui-react';
+import { Form, Icon, Table, Dropdown, Menu, Container, Pagination } from 'semantic-ui-react';
 
 import Spinner from '../layout/Spinner';
 import { getCustomer } from '../../actions/customers';
-import { getTransactions, getRangeTransactions } from '../../actions/transactions';
+import { getTransactions } from '../../actions/transactions';
 import { Link } from 'react-router-dom';
 
-const Transaksi = ({ getCustomer, getTransactions, getRangeTransactions, customer:{customer, editID}, transactions:{completeTransactions, loading} }) => {
-    useEffect(() => {
-        if (!customer) getCustomer(editID);;
-        getTransactions();
-    }, [getTransactions, getCustomer, customer, editID]);
-
-    let customerTransactions = [];
-    if (customer) customerTransactions = completeTransactions.filter(transaction => transaction.customer.name === customer.name);
-
-    customerTransactions.sort(function(a, b){
-        var x = a.date.toLowerCase();
-        var y = b.date.toLowerCase();
-        if (x < y) {return 1;}
-        if (x > y) {return -1;}
-        return 0;
-    });
-
-
-
+const Transaksi = ({ getCustomer, getTransactions, customer:{customer, editID}, transactions:{completeTransactions, loading} }) => {
+    
     const [dateRange, setDateRange] = useState({from: '', to: ''})
-    const { from, to } = dateRange;
     const onChange = e => {
         setDateRange({ ...dateRange, [e.target.name]:e.target.value });
     }
+    const { from, to } = dateRange;
 
-    const onSubmit = async e => {
-        e.preventDefault();
-        getRangeTransactions(from, to);
+    const [pagination, setPagination] = useState({page: 1, totalPages:1000});
+
+    const onPageChange = (e, {activePage}) => {
+        if (page !== 1 && completeTransactions.length === 0){
+            setPagination({ ...pagination, ['page']:1 });
+        } else if (activePage !== 1 && completeTransactions.length !== 0) {
+            setPagination({ ...pagination, ['page']:activePage });
+        }
     }
+    const {page, totalPages} = pagination;
+
+    useEffect(() => {
+        if (!customer) getCustomer(editID);;
+        getTransactions(from, to, page, editID);
+    }, [getTransactions, getCustomer, customer, editID, from, to, page]);
 
     const renderTransaction = transaction => {
         return (
@@ -65,7 +59,7 @@ const Transaksi = ({ getCustomer, getTransactions, getRangeTransactions, custome
 
     return (
         <Fragment>
-            <Form onSubmit={onSubmit}>
+            <Form>
                 <Menu.Item position="right" as={Link} to="/dashboard/pelanggan">
                     <Icon name="arrow left" size="large" />
                 </Menu.Item>
@@ -104,9 +98,6 @@ const Transaksi = ({ getCustomer, getTransactions, getRangeTransactions, custome
                             required 
                         />
                     </Form.Field>
-                    <Button icon type='submit' style={{backgroundColor:'transparent', paddingTop:'30px'}} >
-                        <Icon name='arrow circle right' size='large' color='teal' />
-                    </Button>
                 </Form.Group>
             </Form>
             {loading ? <Spinner /> : (
@@ -119,8 +110,20 @@ const Transaksi = ({ getCustomer, getTransactions, getRangeTransactions, custome
                                 <Table.HeaderCell>Jenis</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
-                        {customerTransactions.map(transaction => (renderTransaction(transaction)))}
+                        {completeTransactions.map(transaction => (renderTransaction(transaction)))}
                     </Table>
+                    <Container textAlign='center' style={{marginTop:'0px'}}>
+                    <Pagination
+                        boundaryRange={0}
+                        activePage={page}
+                        ellipsisItem={null}
+                        firstItem={null}
+                        lastItem={null}
+                        siblingRange={1}
+                        totalPages={totalPages}
+                        onPageChange={onPageChange}
+                    />
+                    </Container>
                 </Fragment>
             )}
         </Fragment>
@@ -130,7 +133,6 @@ const Transaksi = ({ getCustomer, getTransactions, getRangeTransactions, custome
 Transaksi.propTypes = {
     getTransactions: PropTypes.func.isRequired,
     getCustomer: PropTypes.func.isRequired,
-    getRangeTransactions: PropTypes.func.isRequired,
     customer: PropTypes.object.isRequired,
     transactions: PropTypes.object.isRequired
   };
@@ -140,4 +142,4 @@ const mapStateToProps = state => ({
     transactions: state.transaction
   });
 
-export default connect(mapStateToProps, { getCustomer, getTransactions, getRangeTransactions })(Transaksi);
+export default connect(mapStateToProps, { getCustomer, getTransactions })(Transaksi);

@@ -53,7 +53,8 @@ router.post('/', [auth, [
 // @access   Public
 router.get('/', async (req, res) => {
     try {
-        const items = await Item.find();
+        const items = await Item.find().sort({ name: -1 });
+
         res.json(items);
     } catch (err) {
         console.error(err.message);
