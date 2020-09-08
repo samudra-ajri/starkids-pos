@@ -12,8 +12,9 @@ const checkObjectId = require('../../middleware/checkObjectId');
 // @access   Private
 router.post('/', [auth, [
         check('name', 'Name is required').not().isEmpty(),
-        check('quantity', 'Please include a valid quantity').isInt({ gt:0 }),
-        check('unit', 'Please include a valid unit').not().isEmpty()
+        check('quantity', 'Please include a valid quantity').isInt({ gte:0 }),
+        check('unit', 'Please include a valid unit').not().isEmpty(),
+        check('price', 'Please include a valid price').isInt({ gte:0 })
     ]],
     async (req, res) => {
         const errors = validationResult(req);
@@ -21,7 +22,7 @@ router.post('/', [auth, [
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { name, quantity, unit } = req.body;
+        const { name, quantity, unit, price } = req.body;
 
         try {
             let material = await Material.findOne({ name });
@@ -33,7 +34,8 @@ router.post('/', [auth, [
             material = new Material({
                 name,
                 quantity,
-                unit
+                unit,
+                price
             });
 
             material = await material.save();
@@ -51,7 +53,7 @@ router.post('/', [auth, [
 // @access   Public
 router.get('/', async (req, res) => {
     try {
-        const materials = await Material.find().sort({ name: -1 });;
+        const materials = await Material.find().sort({ name: 1 });;
         res.json(materials);
     } catch (err) {
         console.error(err.message);
@@ -102,8 +104,9 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
 // @access   Private
 router.put('/:id', [auth, checkObjectId('id'), [
         check('name', 'Name is required').not().isEmpty(),
-        check('quantity', 'Please include a valid quantity').isInt({ gt:0 }),
-        check('unit', 'Please include a valid unit').not().isEmpty()
+        check('quantity', 'Please include a valid quantity').isInt({ gte:0 }),
+        check('unit', 'Please include a valid unit').not().isEmpty(),
+        check('price', 'Please include a valid price').isInt({ gte:0 })
     ]], async (req, res) => {
 
         const errors = validationResult(req);
@@ -111,13 +114,14 @@ router.put('/:id', [auth, checkObjectId('id'), [
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { name, quantity, unit } = req.body;
+        const { name, quantity, unit, price } = req.body;
         date = Date.now();
 
         const material = {
             name,
             quantity,
             unit,
+            price,
             date
         };
 

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Landing from './components/layout/Landing';
+import Material from './components/layout/Material';
 import Routes from './components/routing/Routes';
 
 // Redux
@@ -12,6 +13,7 @@ import { loadUser } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
 import Alert from './components/layout/Alert';
 import { Container } from 'semantic-ui-react';
+import PrivateRoute from './components/routing/PrivateRoute';
 
 import './App.css';
 
@@ -32,6 +34,7 @@ const App = () => {
           <div style={{minHeight:'100vh'}}>
             <Switch>
               <Route exact path="/" component={Landing} />
+              <PrivateRoute exact path="/materials" component={Material} />
               <Route component={Routes} />
             </Switch>
           </div>

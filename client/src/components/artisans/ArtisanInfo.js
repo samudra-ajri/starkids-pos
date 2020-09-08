@@ -3,14 +3,14 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 
-import { Form, Icon, Table, Dropdown, Menu, Container, Pagination } from 'semantic-ui-react';
+import { Form, Icon, Table, Button, Menu, Container, Pagination } from 'semantic-ui-react';
 
 import Spinner from '../layout/Spinner';
-import { getCustomer } from '../../actions/customers';
-import { getTransactions } from '../../actions/transactions';
+import { getArtisan } from '../../actions/artisans';
+import { getArtisanTransactions, getArtisanTransactionID } from '../../actions/artisantransactions';
 import { Link } from 'react-router-dom';
 
-const Transaksi = ({ getCustomer, getTransactions, customer:{customer, editID}, transactions:{completeTransactions, loading} }) => {
+const Transaksi = ({ getArtisan, getArtisanTransactions, getArtisanTransactionID, artisan:{artisan, editID}, transactions:{completeTransactions, loading} }) => {
     
     const [dateRange, setDateRange] = useState({from: '', to: ''})
     const onChange = e => {
@@ -30,28 +30,46 @@ const Transaksi = ({ getCustomer, getTransactions, customer:{customer, editID}, 
     const {page, totalPages} = pagination;
 
     useEffect(() => {
-        if (!customer) getCustomer(editID);;
-        getTransactions(from, to, page, editID);
-    }, [getTransactions, getCustomer, customer, editID, from, to, page]);
+        if (!artisan) getArtisan(editID);;
+        if (artisan) getArtisanTransactions(from, to, page, artisan.name);
+    }, [getArtisanTransactions, getArtisan, artisan, editID, from, to, page]);
+
+    const onClick = (e, {id}) => {
+        getArtisanTransactionID(id);
+    };
+
+    const renderColor = text => {
+        let color='';
+        if (text === 'On Progress') {
+            color = 'orange';
+        } else if (text === 'Selesai') {
+            color = 'green';
+        } else {
+            color = 'red';
+        }
+
+        return (
+            <b style={{color: color }}>{text}</b>
+        );
+    }
 
     const renderTransaction = transaction => {
         return (
             <Table.Body key={transaction._id}>
                 <Table.Row>
-                    <Table.Cell><Moment format="DD-MM-YYYY">{transaction.date}</Moment></Table.Cell>
-                    <Table.Cell>{transaction.stuff.length === 0 ? transaction.total : 
-                        <Dropdown text={transaction.total.toString()} floating>
-                            <Dropdown.Menu>
-                                {transaction.stuff.map(product => {
-                                    if (product.price_type === 'retail') {
-                                        return <Dropdown.Item key={product._id} description={product.qty+' pcs'} text={product.item.name} />
-                                    }
-                                    return <Dropdown.Item key={product._id} description={product.qty+' kodi'} text={product.item.name} />
-                                })}
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    }</Table.Cell>
-                    <Table.Cell>{transaction.payment_type}</Table.Cell>
+                    <Table.Cell><Moment format="DD-MM-YYYY">{transaction.order_date}</Moment></Table.Cell>
+                    <Table.Cell>
+                        {transaction.finish_date ? 
+                        <Moment format="DD-MM-YYYY">{transaction.finish_date}</Moment> : "-" }
+                    </Table.Cell>
+                    <Table.Cell>{transaction.item}</Table.Cell>
+                    <Table.Cell>{transaction.qty_order}</Table.Cell>
+                    <Table.Cell>{renderColor(transaction.status)}</Table.Cell>
+                    <Table.Cell textAlign='center'>
+                        <Button as={Link} to='/dashboard/progres/action' icon style={{backgroundColor:'transparent', padding:'0px'}} id={transaction._id} onClick={onClick}>
+                            <Icon name='arrow right' size='large' color='teal' />
+                        </Button>
+                    </Table.Cell>
                 </Table.Row>
             </Table.Body>
         );
@@ -60,17 +78,17 @@ const Transaksi = ({ getCustomer, getTransactions, customer:{customer, editID}, 
     return (
         <Fragment>
             <Form>
-                <Menu.Item position="right" as={Link} to="/dashboard/pelanggan">
+                <Menu.Item position="right" as={Link} to="/dashboard/pengrajin">
                     <Icon name="arrow left" size="large" />
                 </Menu.Item>
                 <h3>Detail Pelanggan</h3>
-                {customer && 
+                {artisan && 
                    <p>
-                       <strong>{customer.name}</strong><br/>
-                       {customer.email && <Fragment>{customer.email}<br/></Fragment>}
-                       {customer.phone && <Fragment>{customer.phone}<br/></Fragment>}
-                       {customer.address && <Fragment>{customer.address}<br/></Fragment>}
-                       <strong>Piutang: {customer.debt}</strong>
+                       <strong>{artisan.name}</strong><br/>
+                       {artisan.email && <Fragment>{artisan.email}<br/></Fragment>}
+                       {artisan.phone && <Fragment>{artisan.phone}<br/></Fragment>}
+                       {artisan.address && <Fragment>{artisan.address}<br/></Fragment>}
+                       <strong>Piutang: {artisan.debt}</strong>
                    </p>
                 }
                 <hr style={{color:'#F2F2F2'}}/>
@@ -105,9 +123,12 @@ const Transaksi = ({ getCustomer, getTransactions, customer:{customer, editID}, 
                     <Table basic='very' compact>
                         <Table.Header>
                             <Table.Row>
-                                <Table.HeaderCell>Tanggal</Table.HeaderCell>
-                                <Table.HeaderCell>Total</Table.HeaderCell>
-                                <Table.HeaderCell>Jenis</Table.HeaderCell>
+                                <Table.HeaderCell>Tgl Pengerjaan</Table.HeaderCell>
+                                <Table.HeaderCell>Tgl Selesai</Table.HeaderCell>
+                                <Table.HeaderCell>Produk</Table.HeaderCell>
+                                <Table.HeaderCell>Qty Order</Table.HeaderCell>
+                                <Table.HeaderCell>Status</Table.HeaderCell>
+                                <Table.HeaderCell textAlign='center'>Tindakan</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         {completeTransactions.map(transaction => (renderTransaction(transaction)))}
@@ -131,15 +152,16 @@ const Transaksi = ({ getCustomer, getTransactions, customer:{customer, editID}, 
 };
 
 Transaksi.propTypes = {
-    getTransactions: PropTypes.func.isRequired,
-    getCustomer: PropTypes.func.isRequired,
-    customer: PropTypes.object.isRequired,
+    getArtisan: PropTypes.func.isRequired,
+    getArtisanTransactions: PropTypes.func.isRequired,
+    getArtisanTransactionID: PropTypes.func.isRequired,
+    artisan: PropTypes.object.isRequired,
     transactions: PropTypes.object.isRequired
   };
 
 const mapStateToProps = state => ({
-    customer: state.customer,
-    transactions: state.transaction
+    artisan: state.artisan,
+    transactions: state.artisantransaction
   });
 
-export default connect(mapStateToProps, { getCustomer, getTransactions })(Transaksi);
+export default connect(mapStateToProps, { getArtisan, getArtisanTransactions, getArtisanTransactionID })(Transaksi);

@@ -36,7 +36,6 @@ export const basketItems = (items) => async dispatch => {
 export const cleanBasket = (items, itemID) => async dispatch => {
   try {
     const newItems = items.filter(item => item._id !== itemID);
-
     dispatch({
       type: BASKET_CLEAN,
       payload: newItems
@@ -57,7 +56,7 @@ export const cleanBasket = (items, itemID) => async dispatch => {
 };
 
 // Create a transaction
-export const createTransaction = (formData, history, sent=false) => async dispatch => {
+export const createTransaction = (formData, history) => async dispatch => {
   try {
     await api.post('/transactions', formData);
 
@@ -87,11 +86,19 @@ export const createTransaction = (formData, history, sent=false) => async dispat
 export const getTransactions = (from, to, page, customerID) => async dispatch => {
   try {
     dispatch({ type: CLEAR_TRANSACTION });
-    const res = await api.get(`/transactions?customer=${customerID}&from=${from}&to=${to}&page=${page}&pagination=10`);
+    let res = {};
+    if (page) {
+      res = await api.get(`/transactions?customer=${customerID}&from=${from}&to=${to}&page=${page}&pagination=10`);
+    } else {
+      if (from || to) res = await api.get(`/transactions?from=${from}&to=${to}`);
+    }
+
+    let payload;
+    if (res.data ? payload=res.data : payload=[]);
 
     dispatch({
       type: GET_TRANSACTIONS,
-      payload: res.data
+      payload: payload
     });
 
   } catch (err) {

@@ -3,12 +3,12 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const auth = require('../../middleware/auth');
 
-const Customer = require('../../models/Customer');
+const Artisan = require('../../models/Artisan');
 const checkObjectId = require('../../middleware/checkObjectId');
 
 
-// @route    POST api/customers
-// @desc     Create customer
+// @route    POST api/artisans
+// @desc     Create artisan
 // @access   Private
 router.post('/', [auth, [
         check('name', 'Name is required').not().isEmpty()
@@ -22,13 +22,13 @@ router.post('/', [auth, [
         const { name, email, address, phone, debt } = req.body;
 
         try {
-            let customer = await Customer.findOne({ name });
+            let artisan = await Artisan.findOne({ name });
 
-            if (customer) {
-                return res.status(400).json({ errors: [{ msg: 'Customer already exists' }] });
+            if (artisan) {
+                return res.status(400).json({ errors: [{ msg: 'Artisan already exists' }] });
             }
 
-            customer = new Customer({
+            artisan = new Artisan({
                 name, 
                 email, 
                 address, 
@@ -36,9 +36,9 @@ router.post('/', [auth, [
                 debt
             });
 
-            customer = await customer.save();
+            artisan = await artisan.save();
 
-            res.json(customer);
+            res.json(artisan);
         } catch (err) {
             console.error(err.message);
             res.status(500).send('Server Error');
@@ -46,8 +46,8 @@ router.post('/', [auth, [
     }
 );
 
-// @route    GET api/customers
-// @desc     Get all customers
+// @route    GET api/artisans
+// @desc     Get all artisans
 // @access   Private
 router.get('/', auth, async (req, res) => {
     try {
@@ -55,55 +55,54 @@ router.get('/', auth, async (req, res) => {
         const name = req.query.name && req.query.name;
         if (name) match.name = name;
 
-        const customers = await Customer.find( match ).sort({ name: 1 });
-
-        res.json(customers);
+        const artisans = await Artisan.find( match ).sort({ name: 1 });
+        res.json(artisans);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
 
-// @route    GET api/customers/:id
-// @desc     Get customer by ID
+// @route    GET api/artisans/:id
+// @desc     Get artisan by ID
 // @access   Private
 router.get('/:id', [auth, checkObjectId('id')], async (req, res) => {
     try {
-        const customer = await Customer.findById(req.params.id);
+        const artisan = await Artisan.findById(req.params.id);
 
-        if (!customer) {
-            return res.status(404).json({ msg: 'Customer not found' });
+        if (!artisan) {
+            return res.status(404).json({ msg: 'Artisan not found' });
         }
 
-        res.json(customer);
+        res.json(artisan);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
 
-// @route    DELETE api/customers/:id
-// @desc     Delete a customer
+// @route    DELETE api/artisans/:id
+// @desc     Delete a artisan
 // @access   Private
 router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
     try {
-        const customer = await Customer.findById(req.params.id);
+        const artisan = await Artisan.findById(req.params.id);
     
-        if (!customer) {
-            return res.status(404).json({ msg: 'Customer not found' });
+        if (!artisan) {
+            return res.status(404).json({ msg: 'Artisan not found' });
         }
     
-        await customer.remove();
+        await artisan.remove();
     
-        res.json({ msg: 'Customer removed' });
+        res.json({ msg: 'Artisan removed' });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
     }
   });
 
-// @route    PUT api/customers/:id
-// @desc     Update a customer
+// @route    PUT api/artisans/:id
+// @desc     Update a artisan
 // @access   Private
 router.put('/:id', [auth, checkObjectId('id'), [
         check('name', 'Name is required').not().isEmpty()
@@ -115,9 +114,9 @@ router.put('/:id', [auth, checkObjectId('id'), [
         }
 
         try {
-            const updatedCustomer = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true, upsert: true });
+            const updatedArtisan = await Artisan.findByIdAndUpdate(req.params.id, req.body, { new: true, upsert: true });
             
-            res.json(updatedCustomer);
+            res.json(updatedArtisan);
         } catch (err) {
             console.error(err.message);
             res.status(500).send('Server Error');
@@ -125,12 +124,12 @@ router.put('/:id', [auth, checkObjectId('id'), [
     }
 );
 
-// @route    PATCH api/customers/:id
+// @route    PATCH api/artisans/:id
 // @desc     Update body document
 // @access   Private
 router.patch('/:id', [auth, checkObjectId('id')], async (req, res) => {
     try {
-        const item= await Customer.findByIdAndUpdate(req.params.id, {$set: req.body}, { new: true, upsert: true });        
+        const item= await Artisan.findByIdAndUpdate(req.params.id, {$set: req.body}, { new: true, upsert: true });        
 
         res.json(item);
     } catch (err) {

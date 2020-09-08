@@ -1,8 +1,8 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { Button, Form, Image, Card, Icon, Container } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { Button, Form, Image, Card, Icon, Container } from 'semantic-ui-react';
 
 import { getCustomers, patchDebt } from '../../actions/customers';
 import { cleanBasket, createTransaction } from '../../actions/transactions';
@@ -13,14 +13,6 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
         getCustomers();
     }, [getCustomers]);
     
-    customers.sort(function(a, b){
-        var x = a.name.toLowerCase();
-        var y = b.name.toLowerCase();
-        if (x < y) {return -1;}
-        if (x > y) {return 1;}
-        return 0;
-    });
-
     let initialState = {};
     basket.forEach(item => {
         initialState['qty_'+item._id] = 1;
@@ -28,7 +20,7 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
         initialState['ttl_'+item._id] = item.price.retail;
     });
     
-    initialState['customer'] = '5f42206e4398bc7741e47983';
+    initialState['customer'] = '';
     initialState['payment_type'] = 'tunai';
     initialState['stuff'] = basket;
     initialState['total'] = 0;
@@ -64,7 +56,7 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
     const onSubmit = async e => {
         e.preventDefault();
         
-        // Update quantity of items
+        // Update quantity of items and create item list
         let leftQty = 0;
         const completeStuff = [];
         formData['stuff'].forEach(item => {
@@ -110,7 +102,7 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
             stuff: completeStuff,
             total: formData['total']
         }
-        createTransaction(finalData, history, true);
+        createTransaction(finalData, history);
     }
 
 
@@ -129,7 +121,7 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
                         <Form.Group>
                             <Form.Field
                                 type='radio'
-                                label={'Satuan (Rp '+item.price.retail+')'}
+                                label={'Satuan ('+item.price.retail+')'}
                                 value={item.price.retail}
                                 control='input'
                                 name={'rd_'+item._id}
@@ -138,7 +130,7 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
                             />
                             <Form.Field
                                 type='radio'
-                                label={'Kodi (Rp '+item.price.wholesale+')'}
+                                label={'Kodi ('+item.price.wholesale+')'}
                                 value={item.price.wholesale}
                                 control='input'
                                 name={'rd_'+item._id}
@@ -171,11 +163,10 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
 
     return ( 
         <Fragment>
-            <Container>
+            <Container style={{marginTop: '0rem'}}>
             <h1>Transaksi</h1> <br/>
             <Form style={{paddingBottom:'3rem'}} onSubmit={onSubmit}>
                 <Card.Group>
-
                     {formData['stuff'].map(item => (renderItem(item)))}
                 </Card.Group>
                 <Form.Field style={{marginTop:'1rem'}}>

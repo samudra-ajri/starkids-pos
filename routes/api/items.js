@@ -53,7 +53,11 @@ router.post('/', [auth, [
 // @access   Public
 router.get('/', async (req, res) => {
     try {
-        const items = await Item.find().sort({ name: -1 });
+        const match = {}
+        const name = req.query.name && req.query.name;
+        if (name) match.name = name; 
+
+        const items = await Item.find( match ).sort({ name: 1 });
 
         res.json(items);
     } catch (err) {
@@ -116,12 +120,14 @@ router.put('/:id', [auth, checkObjectId('id'), [
         }
 
         const { name, quantity, image, retail, wholesale } = req.body;
+        date = Date.now();
 
         const item = {
             name,
             quantity,
             image,
-            price: {retail, wholesale}
+            price: {retail, wholesale},
+            date
         };
 
         try {
@@ -160,6 +166,7 @@ router.post('/upload', auth, async (req, res) => {
 // @desc     Update body document
 // @access   Private
 router.patch('/:id', [auth, checkObjectId('id')], async (req, res) => {
+    req.body.date = Date.now();
     try {
         const item= await Item.findByIdAndUpdate(req.params.id, {$set: req.body}, { new: true, upsert: true });        
 

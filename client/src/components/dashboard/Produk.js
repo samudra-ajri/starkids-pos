@@ -15,18 +15,9 @@ const Produk = ({ getItems, getItemEditID, items: {loading, items}}) => {
         getItems();
     }, [getItems]);
 
-    // items.sort(function(a, b){
-    //     var x = a.name.toLowerCase();
-    //     var y = b.name.toLowerCase();
-    //     if (x < y) {return -1;}
-    //     if (x > y) {return 1;}
-    //     return 0;
-    // });
-
     const onClick = (e, {id}) => {
         getItemEditID(id);
     };
-
 
     const renderItem = item => {
         return (
@@ -65,7 +56,7 @@ const Produk = ({ getItems, getItemEditID, items: {loading, items}}) => {
                                     <Table.HeaderCell>Harga Eceran</Table.HeaderCell>
                                     <Table.HeaderCell>Harga Grosir</Table.HeaderCell>
                                     <Table.HeaderCell>Terakhir Update</Table.HeaderCell>
-                                    <Table.HeaderCell></Table.HeaderCell>
+                                    <Table.HeaderCell>Edit</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
                             {items.map(item => (renderItem(item)))}

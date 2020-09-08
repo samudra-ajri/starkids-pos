@@ -6,8 +6,8 @@ import { logout } from '../../actions/auth';
 import { Menu, Icon } from 'semantic-ui-react';
 
 
-const Navbar = ({ auth: { isAuthenticated, loading }, logout, basket }) => {
-  const [activeItem, setActiveItem] = useState('produk');
+const Navbar = ({ auth: { isAuthenticated, loading }, logout, basket, truck }) => {
+  const [activeItem, setActiveItem] = useState('');
 
   const onClick = (e, { name }) => {
     setActiveItem(name)
@@ -15,6 +15,13 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout, basket }) => {
 
   const authLinks = (
     <Fragment>
+
+      {truck.length !== 0 &&
+      (<Menu.Item name='truck' as={Link} to='/artisan-transaction' active={activeItem === 'truck'} onClick={onClick}>
+        <Icon name='truck' color='purple'/><b style={{color:'purple'}}>{truck.length}</b>
+      </Menu.Item>)
+      }
+
       {basket.length !== 0 ?
       (<Menu.Item name='basket' as={Link} to='/create-transaction' active={activeItem === 'basket'} onClick={onClick}>
         <Icon name='shopping basket' color='orange'/><b style={{color:'orange'}}>{basket.length}</b>
@@ -23,7 +30,9 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout, basket }) => {
         <Icon name='shopping basket' />
       </Menu.Item>)
       }
+
       <Menu.Item name='produk' as={Link} to='/' active={activeItem === 'produk'} onClick={onClick}/>
+      <Menu.Item name='bahan' as={Link} to='/materials' active={activeItem === 'bahan'} onClick={onClick}/>
       <Menu.Item name='dashboard' as={Link} to='/dashboard' active={activeItem === 'dashboard'} onClick={onClick}/>
       <Menu.Item name='logout' active={activeItem === 'logout'} onClick={logout}/>
     </Fragment>
@@ -55,12 +64,14 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout, basket }) => {
 Navbar.propTypes = {
   logout: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
-  basket: PropTypes.array.isRequired
+  basket: PropTypes.array.isRequired,
+  truck: PropTypes.array.isRequired
 };
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  basket: state.transaction.transactions
+  basket: state.transaction.transactions,
+  truck: state.artisantransaction.transactions
 });
 
 export default connect(mapStateToProps, { logout })(Navbar);

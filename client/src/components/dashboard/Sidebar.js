@@ -3,9 +3,18 @@ import { Menu } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
-    const [activeItem, setSctiveItem] = useState('transaksi');
+    const [activeItem, setActiveItem] = useState('');
+    const [dropDown, setDropDown] = useState('');
     const onClick = (e, { name }) => {
-        setSctiveItem(name);
+        setActiveItem(name);
+    }
+    const onClickMenu = (e, { name, className }) => {
+        if (dropDown === className) {
+            setDropDown('');
+        } else {
+            setDropDown(className);
+        }
+        if (name) setActiveItem(name);
     }
 
     return (
@@ -13,29 +22,59 @@ const Sidebar = () => {
             <Menu.Item header as={Link} to='/dashboard' style={{color:'black'}}><b>Dashboard</b></Menu.Item>
             <Menu secondary vertical>
                 <Menu.Item
+                    className='transaksi'
                     name='transaksi'
                     active={activeItem === 'transaksi'}
-                    onClick={onClick}
+                    onClick={onClickMenu}
                     as={Link} to='/dashboard/transaksi'
-                />
+                ><b>Transaksi</b></Menu.Item>
+                <Menu.Item className='partner' onClick={onClickMenu}><b>Mitra</b></Menu.Item>
+                {dropDown === 'partner' && 
+                    <Fragment>
+                        <Menu.Item
+                        name='pengrajin'
+                        active={activeItem === 'pengrajin'}
+                        onClick={onClick}
+                        as={Link} to='/dashboard/pengrajin'
+                        />
+                        <Menu.Item
+                            name='pelanggan'
+                            active={activeItem === 'pelanggan'}
+                            onClick={onClick}
+                            as={Link} to='/dashboard/pelanggan'
+                        />
+                    </Fragment>
+                }
+                <Menu.Item className='gudang' onClick={onClickMenu}><b>Gudang</b></Menu.Item>
+                {dropDown === 'gudang' &&
+                    <Fragment>
+                        <Menu.Item
+                            name='bahan'
+                            active={activeItem === 'bahan'}
+                            onClick={onClick}
+                            as={Link} to='/dashboard/bahan'
+                        />
+                        <Menu.Item
+                            name='produk'
+                            active={activeItem === 'produk'}
+                            onClick={onClick}
+                            as={Link} to='/dashboard/produk'
+                        />
+                        <Menu.Item
+                            name='progres-produk'
+                            active={activeItem === 'progres-produk'}
+                            onClick={onClick}
+                            as={Link} to='/dashboard/progres'
+                        />
+                    </Fragment>
+                }
                 <Menu.Item
-                    name='pelanggan'
-                    active={activeItem === 'pelanggan'}
-                    onClick={onClick}
-                    as={Link} to='/dashboard/pelanggan'
-                />
-                <Menu.Item
-                    name='produk'
-                    active={activeItem === 'produk'}
-                    onClick={onClick}
-                    as={Link} to='/dashboard/produk'
-                />
-                <Menu.Item
-                    name='bahan-baku'
-                    active={activeItem === 'bahan-baku'}
-                    onClick={onClick}
-                    as={Link} to='/dashboard/bahan-baku'
-                />
+                    className='report'
+                    name='report'
+                    active={activeItem === 'report'}
+                    onClick={onClickMenu}
+                    as={Link} to='/dashboard/laporan'
+                ><b>Omzet</b></Menu.Item>
             </Menu>
         </Fragment>
     )

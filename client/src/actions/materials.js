@@ -40,12 +40,14 @@ export const createMaterial = (formData, materialID, history) => async dispatch 
 // Get material by ID
 export const getMaterial = (materialID) => async dispatch => {
   try {
-    const res = await api.get(`/materials/${materialID}`);
-
-    dispatch({
-      type: GET_MATERIAL,
-      payload: res.data
-    });
+    if (materialID) {
+      const res = await api.get(`/materials/${materialID}`);
+      
+      dispatch({
+        type: GET_MATERIAL,
+        payload: res.data
+      });
+    }
 
   } catch (err) {
       const errors = err.response.data.errors;
@@ -119,7 +121,7 @@ export const getMaterialEditID = (materialID) => async dispatch => {
     }
 
     dispatch({
-      type: ERROR_ITEM,
+      type: ERROR_MATERIAL,
       payload: { msg: err.response.statusText, status: err.response.status }
     });
   }

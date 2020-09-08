@@ -20,9 +20,9 @@ const Transaksi = ({ getTransactions, transactions:{completeTransactions, loadin
     
     const onPageChange = (e, {activePage}) => {
         if (page !== 1 && completeTransactions.length === 0){
-            setPagination({ ...pagination, ['page']:1 });
-        } else if (activePage !== 1 && completeTransactions.length !== 0) {
-            setPagination({ ...pagination, ['page']:activePage });
+            setPagination({ ...pagination, 'page':1 });
+        } else if (completeTransactions.length !== 0) {
+            setPagination({ ...pagination, 'page':activePage });
         }
     }
     const {page, totalPages} = pagination;
@@ -30,23 +30,6 @@ const Transaksi = ({ getTransactions, transactions:{completeTransactions, loadin
     useEffect(() => {
         getTransactions(from, to, page, '');
     }, [getTransactions, from, to, page]);
-
-    const laba = {omzet: '', piutang: '', pelunasan: ''};
-    let { omzet, piutang, pelunasan } = laba;
-
-    if (from !== '' || to !== '') {
-        omzet = 0; pelunasan = 0; piutang = 0;
-        completeTransactions.forEach(transaction => {
-            if (transaction.payment_type !== 'pelunasan') {
-                omzet += transaction.total;
-                if (transaction.payment_type === 'angsur') {
-                    piutang += transaction.total;
-                }
-            } else {
-                pelunasan += transaction.total;
-            }
-        });
-    }
 
     const renderTransaction = transaction => {
         return (
@@ -103,23 +86,6 @@ const Transaksi = ({ getTransactions, transactions:{completeTransactions, loadin
             </Form>
             {loading ? <Spinner /> : (
                 <Fragment>
-                    <Table basic='very' compact collapsing key={completeTransactions._id}>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>Omzet</Table.HeaderCell>
-                                <Table.HeaderCell>Piutang</Table.HeaderCell>
-                                <Table.HeaderCell>Pelunasan</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            <Table.Row>
-                                <Table.Cell>{omzet}</Table.Cell>
-                                <Table.Cell>{piutang}</Table.Cell>
-                                <Table.Cell>{pelunasan}</Table.Cell>
-                            </Table.Row>
-                        </Table.Body>
-                    </Table>
-                    
                     <Table basic='very' compact>
                         <Table.Header>
                             <Table.Row>

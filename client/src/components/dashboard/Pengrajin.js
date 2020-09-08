@@ -5,33 +5,34 @@ import { Icon, Button, Table } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 import Spinner from '../layout/Spinner';
-import { getCustomers, getEditID } from '../../actions/customers';
+import { getArtisans, getEditID } from '../../actions/artisans';
 
 
-const Pelanggan = ({ getCustomers, getEditID, customers: {loading, customers}}) => {
+const Pengrajin = ({ getArtisans, getEditID, artisans: {loading, artisans} }) => {
 
     useEffect(() => {
-        getCustomers();
-    }, [getCustomers]);
+        getArtisans();
+    }, [getArtisans]);
 
     const onClick = (e, {id}) => {
         getEditID(id);
     };
 
-    const renderCustomer = customer => {
+
+    const renderArtisan = artisan => {
         return (
-            <Table.Body key={customer._id}>
+            <Table.Body key={artisan._id}>
                 <Table.Row>
-                    <Table.Cell>{customer.name}</Table.Cell>
-                    <Table.Cell>{customer.email}</Table.Cell>
-                    <Table.Cell>{customer.address}</Table.Cell>
-                    <Table.Cell>{customer.phone}</Table.Cell>
-                    <Table.Cell>{customer.debt}</Table.Cell>
+                    <Table.Cell>{artisan.name}</Table.Cell>
+                    <Table.Cell>{artisan.email}</Table.Cell>
+                    <Table.Cell>{artisan.address}</Table.Cell>
+                    <Table.Cell>{artisan.phone}</Table.Cell>
+                    <Table.Cell>{artisan.debt}</Table.Cell>
                     <Table.Cell textAlign='center'>
-                        <Button as={Link} to='/dashboard/pelanggan/create-customer' icon style={{backgroundColor:'transparent', padding:'0px'}} id={customer._id} onClick={onClick}>
+                        <Button as={Link} to='/dashboard/pengrajin/create-artisan' icon style={{backgroundColor:'transparent', padding:'0px'}} id={artisan._id} onClick={onClick}>
                             <Icon name='edit outline' size='large' />
                         </Button>
-                        <Button as={Link} to='/dashboard/pelanggan/info' icon style={{backgroundColor:'transparent', padding:'0px'}} id={customer._id} onClick={onClick}>
+                        <Button as={Link} to='/dashboard/pengrajin/info' icon style={{backgroundColor:'transparent', padding:'0px'}} id={artisan._id} onClick={onClick}>
                             <Icon name='arrow right' size='large' color='teal' />
                         </Button>
                     </Table.Cell>
@@ -42,10 +43,10 @@ const Pelanggan = ({ getCustomers, getEditID, customers: {loading, customers}}) 
 
     return (
         <Fragment>
-            <h3 style={{flexGrow:'0'}}>Daftar Pelanggan</h3>
+            <h3 style={{flexGrow:'0'}}>Daftar Pengrajin</h3>
             <div>
-                <Button as={Link} to='/dashboard/pelanggan/create-customer' icon labelPosition='left' color='twitter'>
-                    <Icon name='user plus' /> Tambah Pelanggan
+                <Button as={Link} to='/dashboard/pengrajin/create-artisan' icon labelPosition='left' color='twitter'>
+                    <Icon name='user plus' /> Tambah Pengrajin
                 </Button>
                 <br/><br/>
                 {loading ? <Spinner /> : (
@@ -61,7 +62,7 @@ const Pelanggan = ({ getCustomers, getEditID, customers: {loading, customers}}) 
                                     <Table.HeaderCell>Edit/Info</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
-                            {customers.map(customer => (renderCustomer(customer)))}
+                            { artisans.map(artisan => ( renderArtisan(artisan) )) }
                         </Table>
                     </Fragment>
                 )}
@@ -70,14 +71,14 @@ const Pelanggan = ({ getCustomers, getEditID, customers: {loading, customers}}) 
     );
 };
 
-Pelanggan.propTypes = {
-    getCustomers: PropTypes.func.isRequired,
+Pengrajin.propTypes = {
+    getArtisans: PropTypes.func.isRequired,
     getEditID: PropTypes.func.isRequired,
-    customers: PropTypes.object.isRequired
+    artisans: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-    customers: state.customer
+    artisans: state.artisan
 });
 
-export default connect(mapStateToProps, { getCustomers, getEditID })(Pelanggan);
+export default connect(mapStateToProps, { getArtisans, getEditID })(Pengrajin);

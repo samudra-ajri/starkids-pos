@@ -40,15 +40,43 @@ export const createItem = (formData, itemID, history) => async dispatch => {
 // Get item by ID
 export const getItem = (itemID) => async dispatch => {
   try {
-    const res = await api.get(`/items/${itemID}`);
+    if (itemID) {
+      const res = await api.get(`/items/${itemID}`);
 
-    dispatch({
-      type: GET_ITEM,
-      payload: res.data
-    });
+      dispatch({
+        type: GET_ITEM,
+        payload: res.data
+      });
+    }
 
   } catch (err) {
       const errors = err.response.data.errors;
+
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    }
+
+    dispatch({
+      type: ERROR_ITEM,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Get item by name
+export const getItemByName = (name) => async dispatch => {
+  try {
+    if (name) {
+      const res = await api.get(`/items?name=${name}`);
+
+      dispatch({
+        type: GET_ITEM,
+        payload: res.data[0]
+      });
+    }
+
+  } catch (err) {
+    const errors = err.response.data.errors;
 
     if (errors) {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));

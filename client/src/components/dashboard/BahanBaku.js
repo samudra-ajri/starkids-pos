@@ -7,8 +7,6 @@ import Moment from 'react-moment';
 
 import Spinner from '../layout/Spinner';
 import { getMaterials, getMaterialEditID } from '../../actions/materials';
-import material from '../../reducers/material';
-
 
 const BahanBaku = ({ getMaterials, getMaterialEditID, materials: {loading, materials}}) => {
 
@@ -29,9 +27,10 @@ const BahanBaku = ({ getMaterials, getMaterialEditID, materials: {loading, mater
                     <Table.Cell>{material.name}</Table.Cell>
                     <Table.Cell>{material.unit}</Table.Cell>
                     <Table.Cell>{material.quantity}</Table.Cell>
+                    <Table.Cell>{material.price}</Table.Cell>
                     <Table.Cell><Moment format="DD-MM-YYYY HH:mm">{material.date}</Moment></Table.Cell>
                     <Table.Cell>
-                        <Button as={Link} to='/dashboard/produk/create-material' icon style={{backgroundColor:'transparent', padding:'0px'}} id={material._id} onClick={onClick}>
+                        <Button as={Link} to='/dashboard/bahan/create-material' icon style={{backgroundColor:'transparent', padding:'0px'}} id={material._id} onClick={onClick}>
                             <Icon name='edit outline' size='large' />
                         </Button>
                     </Table.Cell>
@@ -42,10 +41,10 @@ const BahanBaku = ({ getMaterials, getMaterialEditID, materials: {loading, mater
 
     return (
         <Fragment>
-            <h3 style={{flexGrow:'0'}}>Daftar Bahan Baku</h3>
+            <h3 style={{flexGrow:'0'}}>Daftar Bahan</h3>
             <div>
-                <Button as={Link} to='/dashboard/produk/create-material' icon labelPosition='left' color='twitter'>
-                    <Icon name='box' /> Tambah Bahan Baku
+                <Button as={Link} to='/dashboard/bahan/create-material' icon labelPosition='left' color='twitter'>
+                    <Icon name='box' /> Tambah Bahan
                 </Button>
                 <br/><br/>
                 {loading ? <Spinner /> : (
@@ -56,11 +55,12 @@ const BahanBaku = ({ getMaterials, getMaterialEditID, materials: {loading, mater
                                     <Table.HeaderCell>Bahan</Table.HeaderCell>
                                     <Table.HeaderCell>Unit</Table.HeaderCell>
                                     <Table.HeaderCell>Stok</Table.HeaderCell>
+                                    <Table.HeaderCell>Harga (Rp)</Table.HeaderCell>
                                     <Table.HeaderCell>Terakhir Update</Table.HeaderCell>
-                                    <Table.HeaderCell></Table.HeaderCell>
+                                    <Table.HeaderCell>Edit</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
-                            {materials.map(material => (rendermaterial(item)))}
+                            {materials.map(material => (renderMaterial(material)))}
                         </Table>
                     </Fragment>
                 )}

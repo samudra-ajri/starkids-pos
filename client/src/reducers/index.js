@@ -5,6 +5,8 @@ import item from './item';
 import transaction from './transaction';
 import customer from './customer';
 import material from './material';
+import artisan from './artisan';
+import artisantransaction from './artisantransaction';
 
 export default combineReducers({
   alert,
@@ -12,5 +14,7 @@ export default combineReducers({
   item,
   transaction,
   customer,
-  material
+  material,
+  artisan,
+  artisantransaction
 });

@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 
 import Spinner from '../layout/Spinner';
 import { getItems } from '../../actions/items';
-import { basketItems } from '../../actions/transactions';
+import { basketItems, cleanBasket } from '../../actions/transactions';
 
-import { Card, Container, Image, Search } from 'semantic-ui-react';
+import { Card, Container, Image, Search, Button } from 'semantic-ui-react';
 
 
-const Landing = ({ isAuthenticated, getItems, basketItems, item: { items, loading }, basket }) => {
+const Landing = ({ isAuthenticated, getItems, basketItems, cleanBasket, item: { items, loading }, basket }) => {
   const [select, setSelect] = useState(basket);
   const [selectID, setSelectID] = useState(basket.map(item => item._id));
   const [search, setSearch] = useState('');
@@ -17,14 +17,6 @@ const Landing = ({ isAuthenticated, getItems, basketItems, item: { items, loadin
   useEffect(() => {
     getItems();
   }, [getItems]);
-
-  // items.sort(function(a, b){
-  //   var x = a.name.toLowerCase();
-  //   var y = b.name.toLowerCase();
-  //   if (x < y) {return -1;}
-  //   if (x > y) {return 1;}
-  //   return 0;
-  // });
 
   const onSearchChange = e => {
     setSearch(e.target.value)
@@ -43,6 +35,17 @@ const Landing = ({ isAuthenticated, getItems, basketItems, item: { items, loadin
   }
   
   basketItems(select);
+
+  const onClickBasket = (e, {id} )=> {
+    cleanBasket(basket, id);
+    setSelect(select.filter(item => item._id !== id));
+    setSelectID(selectID.filter(item => item !== id));
+
+  }
+
+  const renderBasket = item => {
+    return <Button key={item._id} id={item._id} size='mini' color='orange' content={item.name} icon='x' labelPosition='right' onClick={onClickBasket}/>
+  }
 
   const renderItem = item => {
     if ( search !== "" && item.name.toLowerCase().indexOf( search.toLowerCase() ) === -1 ){
@@ -70,12 +73,19 @@ const Landing = ({ isAuthenticated, getItems, basketItems, item: { items, loadin
 
   return (
     <Fragment>
-      <Container textAlign='center'>
+      <Container textAlign='center' style={{marginTop: '0rem'}}>
         <h1>Produk</h1>
         <Search input={{ fluid: true }} onSearchChange={onSearchChange} />
       </Container>
+
+      {basket.length !== 0 &&
+      <Container fluid style={{marginTop: '0rem', paddingTop: '0rem', paddingBottom: '0rem'}}>
+          {basket.map(basket => (renderBasket(basket)))}
+      </Container>
+      }
+
       {loading ? <Spinner /> : (
-      <Container fluid style={{marginTop: '1rem', paddingTop: '1rem', paddingBottom: '1rem'}}>
+      <Container fluid style={{marginTop: '0rem', paddingTop: '1rem', paddingBottom: '1rem'}}>
         <Card.Group itemsPerRow={8}>
           {items.map(item => (renderItem(item)))}
         </Card.Group>
@@ -88,6 +98,7 @@ const Landing = ({ isAuthenticated, getItems, basketItems, item: { items, loadin
 Landing.propTypes = {
   getItems: PropTypes.func.isRequired,
   basketItems: PropTypes.func.isRequired,
+  cleanBasket: PropTypes.func.isRequired,
   item: PropTypes.object.isRequired,
   isAuthenticated: PropTypes.bool,
   basket: PropTypes.array.isRequired
@@ -99,4 +110,4 @@ const mapStateToProps = state => ({
   basket: state.transaction.transactions
 });
 
-export default connect(mapStateToProps, { getItems, basketItems })(Landing);
+export default connect(mapStateToProps, { getItems, basketItems, cleanBasket })(Landing);
