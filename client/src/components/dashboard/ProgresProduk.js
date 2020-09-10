@@ -60,8 +60,8 @@ const ProgresProduk = ({ getArtisanTransactions, getArtisanTransactionID, artisa
                         {transaction.finish_date ? 
                         <Moment format="DD-MM-YYYY">{transaction.finish_date}</Moment> : "-" }
                     </Table.Cell>
-                    <Table.Cell>{transaction.item}</Table.Cell>
-                    <Table.Cell>{transaction.artisan}</Table.Cell>
+                    <Table.Cell>{transaction.item.name}</Table.Cell>
+                    <Table.Cell>{transaction.artisan.name}</Table.Cell>
                     <Table.Cell>{renderColor(transaction.status)}</Table.Cell>
                     <Table.Cell textAlign='center'>
                         <Button as={Link} to='/dashboard/progres/action' icon style={{backgroundColor:'transparent', padding:'0px'}} id={transaction._id} onClick={onClick}>

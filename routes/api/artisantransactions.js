@@ -10,8 +10,8 @@ const checkObjectId = require('../../middleware/checkObjectId');
 // @desc     Create artisantransaction
 // @access   Private
 router.post('/', [auth, [
-        check('artisan', 'Artisan is required').not().isEmpty(),
-        check('item', 'Please include a valid item').not().isEmpty()
+        check('artisan', 'Artisan is required').not().isEmpty().isMongoId(),
+        check('item', 'Please include a valid item').not().isEmpty().isMongoId()
     ]],
     async (req, res) => {
         const errors = validationResult(req);
@@ -79,9 +79,19 @@ router.get('/', auth, async (req, res) => {
         .skip((page - 1) * pagination)
         .limit(pagination)
         .populate({
+            path:'artisan',
+            model:'artisan',
+            select:['name', 'debt']
+        })
+        .populate({
+            path:'item',
+            model:'item',
+            select:['name', 'price', 'quantity']
+        })
+        .populate({
             path:'materials.material',
             model:'material',
-            select:'name'
+            select:['name', 'unit']
         })
         .sort({ order_date: -1 });
         res.json(artisantransactions);
@@ -97,6 +107,16 @@ router.get('/', auth, async (req, res) => {
 router.get('/:id', [auth, checkObjectId('id')], async (req, res) => {
     try {
         const artisantransaction = await ArtisanTransaction.findById(req.params.id)
+        .populate({
+            path:'artisan',
+            model:'artisan',
+            select:['name', 'debt']
+        })
+        .populate({
+            path:'item',
+            model:'item',
+            select:['name', 'price', 'quantity']
+        })
         .populate({
             path:'materials.material',
             model:'material',
@@ -138,8 +158,8 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
 // @desc     Update a artisantransaction
 // @access   Private
 router.put('/:id', [auth, checkObjectId('id'), [
-        check('artisan', 'Artisan is required').not().isEmpty(),
-        check('item', 'Please include a valid item').not().isEmpty()
+        check('artisan', 'Artisan is required').not().isEmpty().isMongoId(),
+        check('item', 'Please include a valid item').not().isEmpty().isMongoId()
     ]], async (req, res) => {
 
         const errors = validationResult(req);

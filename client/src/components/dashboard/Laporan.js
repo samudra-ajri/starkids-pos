@@ -38,7 +38,7 @@ const ProgresProduk = ({
     if (from || to) {
         omzet = 0;
         transactions.forEach(transaction => {
-            if (transaction.payment_type !== 'pelunasan'){
+            if (transaction.payment_type !== 'angsur'){
                 omzet += transaction.total;
             }
         });

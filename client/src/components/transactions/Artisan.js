@@ -130,7 +130,7 @@ const Artisan = ({ basket, artisans, items, getArtisans, cleanBasket, createArti
                     >
                         <option value=''>--pilih pengrajin--</option>
                         {artisans.map((artisan) => { 
-                            return <option key={artisan._id} value={artisan.name}>{artisan.name}</option>
+                            return <option key={artisan._id} value={artisan._id}>{artisan.name}</option>
                         })}
                     </select>
                 </Form.Field>
@@ -143,7 +143,7 @@ const Artisan = ({ basket, artisans, items, getArtisans, cleanBasket, createArti
                     >
                         <option value=''>--produk yang dikerjakan--</option>
                         {items.map(item => { 
-                            return <option key={item._id} value={item.name}>{item.name}</option>
+                            return <option key={item._id} value={item._id}>{item.name}</option>
                         })}
                     </select>
                 </Form.Field>

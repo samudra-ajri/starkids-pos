@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import { Form, Icon, Table, Menu, Button } from 'semantic-ui-react';
 import Moment from 'react-moment';
 
-import { getArtisanByName, patchDebt } from '../../actions/artisans'
-import { getItemByName, patchQuantity } from '../../actions/items'
+import { patchDebt } from '../../actions/artisans'
+import { patchQuantity } from '../../actions/items'
 import { createArtisanTransaction, getArtisanTransaction } from '../../actions/artisantransactions';
 
 const initialState = {
@@ -30,11 +30,7 @@ const initialState = {
 const Artisan = ({ 
     createArtisanTransaction, 
     getArtisanTransaction,
-    getArtisanByName,
-    getItemByName, 
     history,
-    itemState, 
-    artisanState, 
     patchQuantity,
     patchDebt,  
     artisantransaction:{transaction, editID, loading} 
@@ -57,23 +53,21 @@ const Artisan = ({
             }
             setFormData(profileData);
         }
-        getArtisanByName(artisan);
-        getItemByName(item);
-    }, [loading, getArtisanTransaction, editID, transaction, getArtisanByName, getItemByName, artisan, item]);
+    }, [loading, getArtisanTransaction, editID, transaction, artisan, item]);
 
     const onChange = (e) => {
             setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
-    if (itemState && action === 'Pelunasan') {
+    if (transaction && action === 'Pelunasan') {
         if (unit === 'kodi') {
             qty_repayment = addquantity * 20;
             qty_debt = (qty_order-qty_finish-qty_repayment)/20;
-            debt = qty_debt * itemState.price.wholesale;
+            debt = qty_debt * transaction.item.price.wholesale;
         } else {
             qty_repayment = addquantity * 1;
             qty_debt = (qty_order-qty_finish-qty_repayment);
-            debt = qty_debt/20 * itemState.price.wholesale;
+            debt = qty_debt/20 * transaction.item.price.wholesale;
         }
     }
 
@@ -81,16 +75,16 @@ const Artisan = ({
         e.preventDefault();
         if (action === 'Selesai') {
             formData.qty_finish = formData.qty_order;
-            patchQuantity({ 'quantity': itemState.quantity + formData.qty_finish }, itemState._id);
+            patchQuantity({ 'quantity': item.quantity + formData.qty_finish }, item._id);
         } else {
             formData.qty_finish = qty_finish + qty_repayment;
             if (status === 'On Progress') {
-                patchDebt({ 'debt': artisanState.debt + debt }, artisanState._id);
+                patchDebt({ 'debt': artisan.debt + debt }, artisan._id);
             } else if (status === 'Pelunasan') {
-                patchDebt({ 'debt': artisanState.debt - (qty_repayment/20 * itemState.price.wholesale) }, artisanState._id);
+                patchDebt({ 'debt': artisan.debt - (qty_repayment/20 * item.price.wholesale) }, artisan._id);
             }
             
-            if (repayment_type === 'barang') patchQuantity({ 'quantity': itemState.quantity + qty_repayment }, itemState._id);
+            if (repayment_type === 'barang') patchQuantity({ 'quantity': item.quantity + qty_repayment }, item._id);
         }
         
         if (qty_order === formData.qty_finish) {
@@ -99,6 +93,8 @@ const Artisan = ({
             formData.status = 'Pelunasan';
         }
         
+        formData.artisan = artisan._id;
+        formData.item = item._id;
         formData.finish_date = Date.now();
         createArtisanTransaction(formData, history, editID);
     }
@@ -145,11 +141,11 @@ const Artisan = ({
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell><strong>Produk</strong></Table.Cell>
-                            <Table.Cell>{item}</Table.Cell>
+                            <Table.Cell>{item.name}</Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell><strong>Pengrajin</strong></Table.Cell>
-                            <Table.Cell>{artisan}</Table.Cell>
+                            <Table.Cell>{artisan.name}</Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell><strong>Jumlah Order</strong></Table.Cell>
@@ -291,12 +287,8 @@ const Artisan = ({
 };
 
 Artisan.propTypes = {
-    itemState: PropTypes.object,
-    artisanState: PropTypes.object,
     artisantransaction: PropTypes.object.isRequired,
     getArtisanTransaction: PropTypes.func.isRequired,
-    getArtisanByName: PropTypes.func.isRequired,
-    getItemByName: PropTypes.func.isRequired,
     createArtisanTransaction: PropTypes.func.isRequired,
     patchQuantity: PropTypes.func.isRequired,
     patchDebt: PropTypes.func.isRequired
@@ -304,15 +296,11 @@ Artisan.propTypes = {
 
 const mapStateToProps = state => ({
     artisantransaction: state.artisantransaction,
-    itemState: state.item.item,
-    artisanState: state.artisan.artisan
 });
 
 export default connect(mapStateToProps, { 
     createArtisanTransaction, 
     getArtisanTransaction, 
-    getArtisanByName, 
-    getItemByName, 
     patchQuantity,
     patchDebt 
 })(Artisan);

@@ -14,11 +14,13 @@ const ArtisanTransactionSchema = new mongoose.Schema({
         }
     ],
     artisan: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'artisan',
         required: true
     },
     item: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'item',
         required: true
     },
     qty_order: {
