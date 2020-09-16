@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
+import NumberFormat from 'react-number-format';
 
 import { Form, Icon, Table, Dropdown, Menu, Container, Pagination } from 'semantic-ui-react';
 
@@ -30,8 +31,8 @@ const Transaksi = ({ getCustomer, getTransactions, customer:{customer, editID}, 
     const {page, totalPages} = pagination;
 
     useEffect(() => {
-        if (!customer) getCustomer(editID);;
-        getTransactions(from, to, page, editID);
+        if (!customer) getCustomer(editID);
+        getTransactions(from, to, page, editID, 'desc');
     }, [getTransactions, getCustomer, customer, editID, from, to, page]);
 
     const renderTransaction = transaction => {
@@ -70,7 +71,7 @@ const Transaksi = ({ getCustomer, getTransactions, customer:{customer, editID}, 
                        {customer.email && <Fragment>{customer.email}<br/></Fragment>}
                        {customer.phone && <Fragment>{customer.phone}<br/></Fragment>}
                        {customer.address && <Fragment>{customer.address}<br/></Fragment>}
-                       <strong>Piutang: {customer.debt}</strong>
+                       <strong>Piutang: <NumberFormat value={customer.debt} displayType={'text'} thousandSeparator={true} prefix={'Rp '}/></strong>
                    </p>
                 }
                 <hr style={{color:'#F2F2F2'}}/>

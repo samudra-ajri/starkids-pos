@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Button, Form, Image, Card, Icon, Container } from 'semantic-ui-react';
+import NumberFormat from 'react-number-format';
 
 import { getCustomers, patchDebt } from '../../actions/customers';
 import { cleanBasket, createTransaction } from '../../actions/transactions';
@@ -121,20 +122,20 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
                         <Form.Group>
                             <Form.Field
                                 type='radio'
-                                label={'Satuan ('+item.price.retail+')'}
+                                label={'Kodi'}
+                                value={item.price.wholesale}
+                                control='input'
+                                name={'rd_'+item._id}
+                                onChange={onChange}
+                            />
+                            <Form.Field
+                                type='radio'
+                                label={'Satuan'}
                                 value={item.price.retail}
                                 control='input'
                                 name={'rd_'+item._id}
                                 onChange={onChange}
                                 required
-                            />
-                            <Form.Field
-                                type='radio'
-                                label={'Kodi ('+item.price.wholesale+')'}
-                                value={item.price.wholesale}
-                                control='input'
-                                name={'rd_'+item._id}
-                                onChange={onChange}
                             />
                         </Form.Group>
                         <input
@@ -149,7 +150,7 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
                     </Card.Description>
                     <Card.Description>
                         <br/>
-                        Total: {formData['ttl_'+item._id]}
+                        Total: <NumberFormat value={formData['ttl_'+item._id]} displayType={'text'} thousandSeparator={true} prefix={'Rp '}/>
                     </Card.Description>
                 </Card.Content>
                 <Card.Content extra>
@@ -177,6 +178,7 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
                         onChange={onChange}
                         required
                     >
+                        <option value=''>--pilih pelanggan--</option>
                         {customers.map(customer => { 
                             return <option key={customer._id} value={customer._id}>{customer.name}</option>
                         })}

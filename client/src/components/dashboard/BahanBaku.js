@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Icon, Button, Table } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
+import NumberFormat from 'react-number-format';
 
 import Spinner from '../layout/Spinner';
 import { getMaterials, getMaterialEditID } from '../../actions/materials';
@@ -27,7 +28,7 @@ const BahanBaku = ({ getMaterials, getMaterialEditID, materials: {loading, mater
                     <Table.Cell>{material.name}</Table.Cell>
                     <Table.Cell>{material.unit}</Table.Cell>
                     <Table.Cell>{material.quantity}</Table.Cell>
-                    <Table.Cell>{material.price}</Table.Cell>
+                    <Table.Cell><NumberFormat value={material.price} displayType={'text'} thousandSeparator={true}/></Table.Cell>
                     <Table.Cell><Moment format="DD-MM-YYYY HH:mm">{material.date}</Moment></Table.Cell>
                     <Table.Cell>
                         <Button as={Link} to='/dashboard/bahan/create-material' icon style={{backgroundColor:'transparent', padding:'0px'}} id={material._id} onClick={onClick}>

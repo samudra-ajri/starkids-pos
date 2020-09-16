@@ -30,7 +30,7 @@ const Sidebar = () => {
                 ><b>Transaksi</b></Menu.Item>
                 <Menu.Item className='partner' onClick={onClickMenu}><b>Mitra</b></Menu.Item>
                 {dropDown === 'partner' && 
-                    <Fragment>
+                    <div style={{paddingLeft:'5px'}}>
                         <Menu.Item
                         name='pengrajin'
                         active={activeItem === 'pengrajin'}
@@ -43,11 +43,11 @@ const Sidebar = () => {
                             onClick={onClick}
                             as={Link} to='/dashboard/pelanggan'
                         />
-                    </Fragment>
+                    </div>
                 }
                 <Menu.Item className='gudang' onClick={onClickMenu}><b>Gudang</b></Menu.Item>
                 {dropDown === 'gudang' &&
-                    <Fragment>
+                    <div style={{paddingLeft:'5px'}}>
                         <Menu.Item
                             name='bahan'
                             active={activeItem === 'bahan'}
@@ -66,7 +66,7 @@ const Sidebar = () => {
                             onClick={onClick}
                             as={Link} to='/dashboard/progres'
                         />
-                    </Fragment>
+                    </div>
                 }
                 <Menu.Item
                     className='report'
@@ -74,7 +74,7 @@ const Sidebar = () => {
                     active={activeItem === 'report'}
                     onClick={onClickMenu}
                     as={Link} to='/dashboard/laporan'
-                ><b>Omzet</b></Menu.Item>
+                ><b>Laporan</b></Menu.Item>
             </Menu>
         </Fragment>
     )

@@ -21,8 +21,6 @@ import Laporan from './Laporan';
 
 import TransactionsScroll from './TransactionsScroll';
 
-
-
 const Dashboard = () => {
     return (
         <div style={{marginTop:'-50px', marginLeft:'20px', width:'95%', position:'relative'}}>
@@ -62,7 +60,7 @@ const Dashboard = () => {
                         </Switch>
                     </Grid.Column>
                 </Grid>
-                    
+                
                 </Fragment>
             </Router>
         </div>

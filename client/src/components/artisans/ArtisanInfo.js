@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
+import NumberFormat from 'react-number-format';
 
 import { Form, Icon, Table, Button, Menu, Container, Pagination } from 'semantic-ui-react';
 
@@ -31,7 +32,7 @@ const Transaksi = ({ getArtisan, getArtisanTransactions, getArtisanTransactionID
 
     useEffect(() => {
         if (!artisan) getArtisan(editID);;
-        if (artisan) getArtisanTransactions(from, to, page, artisan.name);
+        if (artisan) getArtisanTransactions(from, to, page, artisan._id);
     }, [getArtisanTransactions, getArtisan, artisan, editID, from, to, page]);
 
     const onClick = (e, {id}) => {
@@ -62,7 +63,7 @@ const Transaksi = ({ getArtisan, getArtisanTransactions, getArtisanTransactionID
                         {transaction.finish_date ? 
                         <Moment format="DD-MM-YYYY">{transaction.finish_date}</Moment> : "-" }
                     </Table.Cell>
-                    <Table.Cell>{transaction.item}</Table.Cell>
+                    <Table.Cell>{transaction.item.name}</Table.Cell>
                     <Table.Cell>{transaction.qty_order}</Table.Cell>
                     <Table.Cell>{renderColor(transaction.status)}</Table.Cell>
                     <Table.Cell textAlign='center'>
@@ -88,7 +89,7 @@ const Transaksi = ({ getArtisan, getArtisanTransactions, getArtisanTransactionID
                        {artisan.email && <Fragment>{artisan.email}<br/></Fragment>}
                        {artisan.phone && <Fragment>{artisan.phone}<br/></Fragment>}
                        {artisan.address && <Fragment>{artisan.address}<br/></Fragment>}
-                       <strong>Piutang: {artisan.debt}</strong>
+                       <strong>Piutang: <NumberFormat value={artisan.debt} displayType={'text'} thousandSeparator={true} prefix={'Rp '}/></strong>
                    </p>
                 }
                 <hr style={{color:'#F2F2F2'}}/>
@@ -165,3 +166,4 @@ const mapStateToProps = state => ({
   });
 
 export default connect(mapStateToProps, { getArtisan, getArtisanTransactions, getArtisanTransactionID })(Transaksi);
+

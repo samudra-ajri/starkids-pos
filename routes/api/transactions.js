@@ -73,6 +73,8 @@ router.get('/', auth, async (req, res) => {
         const pagination = req.query.pagination && parseInt(req.query.pagination);
         const page = req.query.page && parseInt(req.query.page);
 
+        const dateSort = req.query.sortdate === 'asc' ? 1 : -1; // 1 = asc; -1 = desc
+
         const transactions = await Transaction.find( match )
         .skip((page - 1) * pagination)
         .limit(pagination)
@@ -86,7 +88,7 @@ router.get('/', auth, async (req, res) => {
             model:'item',
             select:'name'
         })
-        .sort({ date: -1 });
+        .sort({ date: dateSort });
         res.json(transactions);
     } catch (err) {
         console.error(err.message);

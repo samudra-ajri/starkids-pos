@@ -83,14 +83,14 @@ export const createTransaction = (formData, history) => async dispatch => {
 };
 
 // Get all transactions with complete attributes
-export const getTransactions = (from, to, page, customerID) => async dispatch => {
+export const getTransactions = (from, to, page, customerID, dateSort) => async dispatch => {
   try {
     dispatch({ type: CLEAR_TRANSACTION });
     let res = {};
     if (page) {
-      res = await api.get(`/transactions?customer=${customerID}&from=${from}&to=${to}&page=${page}&pagination=10`);
+      res = await api.get(`/transactions?customer=${customerID}&from=${from}&to=${to}&page=${page}&pagination=10&sortdate=${dateSort}`);
     } else {
-      if (from || to) res = await api.get(`/transactions?from=${from}&to=${to}`);
+      if (from || to) res = await api.get(`/transactions?from=${from}&to=${to}&sortdate=${dateSort}`);
     }
 
     let payload;

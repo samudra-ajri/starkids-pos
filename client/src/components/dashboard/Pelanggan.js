@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Icon, Button, Table } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import NumberFormat from 'react-number-format';
 
 import Spinner from '../layout/Spinner';
 import { getCustomers, getEditID } from '../../actions/customers';
@@ -26,7 +27,7 @@ const Pelanggan = ({ getCustomers, getEditID, customers: {loading, customers}}) 
                     <Table.Cell>{customer.email}</Table.Cell>
                     <Table.Cell>{customer.address}</Table.Cell>
                     <Table.Cell>{customer.phone}</Table.Cell>
-                    <Table.Cell>{customer.debt}</Table.Cell>
+                    <Table.Cell><NumberFormat value={customer.debt} displayType={'text'} thousandSeparator={true}/></Table.Cell>
                     <Table.Cell textAlign='center'>
                         <Button as={Link} to='/dashboard/pelanggan/create-customer' icon style={{backgroundColor:'transparent', padding:'0px'}} id={customer._id} onClick={onClick}>
                             <Icon name='edit outline' size='large' />
@@ -57,7 +58,7 @@ const Pelanggan = ({ getCustomers, getEditID, customers: {loading, customers}}) 
                                     <Table.HeaderCell>Email</Table.HeaderCell>
                                     <Table.HeaderCell>Alamat</Table.HeaderCell>
                                     <Table.HeaderCell>Telp/HP</Table.HeaderCell>
-                                    <Table.HeaderCell>Piutang</Table.HeaderCell>
+                                    <Table.HeaderCell>Piutang (Rp)</Table.HeaderCell>
                                     <Table.HeaderCell>Edit/Info</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>

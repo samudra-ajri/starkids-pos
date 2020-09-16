@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
+import NumberFormat from 'react-number-format';
 
 import { Form, Table, Dropdown, Pagination, Container } from 'semantic-ui-react';
 
@@ -28,7 +29,7 @@ const Transaksi = ({ getTransactions, transactions:{completeTransactions, loadin
     const {page, totalPages} = pagination;
 
     useEffect(() => {
-        getTransactions(from, to, page, '');
+        getTransactions(from, to, page, '', 'desc');
     }, [getTransactions, from, to, page]);
 
     const renderTransaction = transaction => {
@@ -37,17 +38,20 @@ const Transaksi = ({ getTransactions, transactions:{completeTransactions, loadin
                 <Table.Row>
                     <Table.Cell><Moment format="DD-MM-YYYY">{transaction.date}</Moment></Table.Cell>
                     <Table.Cell>{transaction.customer.name}</Table.Cell>
-                    <Table.Cell>{transaction.stuff.length === 0 ? transaction.total : 
-                        <Dropdown text={transaction.total.toString()} floating>
-                            <Dropdown.Menu>
-                                {transaction.stuff.map(product => {
-                                    if (product.price_type === 'retail') {
-                                        return <Dropdown.Item key={product._id} description={product.qty+' pcs'} text={product.item.name} />
-                                    }
-                                    return <Dropdown.Item key={product._id} description={product.qty+' kodi'} text={product.item.name} />
-                                })}
-                            </Dropdown.Menu>
-                        </Dropdown>
+                    <Table.Cell>{transaction.stuff.length === 0 ? <NumberFormat value={transaction.total} displayType={'text'} thousandSeparator={true}/> : 
+                        
+                        <NumberFormat value={transaction.total} displayType={'text'} thousandSeparator={true} renderText={value => 
+                            <Dropdown text={value} floating>
+                                <Dropdown.Menu>
+                                    {transaction.stuff.map(product => {
+                                        if (product.price_type === 'retail') {
+                                            return <Dropdown.Item key={product._id} description={product.qty+' pcs'} text={product.item.name} />
+                                        }
+                                        return <Dropdown.Item key={product._id} description={product.qty+' kodi'} text={product.item.name} />
+                                    })}
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        }/>
                     }</Table.Cell>
                     <Table.Cell>{transaction.payment_type}</Table.Cell>
                 </Table.Row>
@@ -91,7 +95,7 @@ const Transaksi = ({ getTransactions, transactions:{completeTransactions, loadin
                             <Table.Row>
                                 <Table.HeaderCell>Tanggal</Table.HeaderCell>
                                 <Table.HeaderCell>Pelanggan</Table.HeaderCell>
-                                <Table.HeaderCell>Total</Table.HeaderCell>
+                                <Table.HeaderCell>Total (Rp)</Table.HeaderCell>
                                 <Table.HeaderCell>Jenis</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>

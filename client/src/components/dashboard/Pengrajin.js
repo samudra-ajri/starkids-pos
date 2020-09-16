@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Icon, Button, Table } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import NumberFormat from 'react-number-format';
 
 import Spinner from '../layout/Spinner';
 import { getArtisans, getEditID } from '../../actions/artisans';
@@ -27,7 +28,7 @@ const Pengrajin = ({ getArtisans, getEditID, artisans: {loading, artisans} }) =>
                     <Table.Cell>{artisan.email}</Table.Cell>
                     <Table.Cell>{artisan.address}</Table.Cell>
                     <Table.Cell>{artisan.phone}</Table.Cell>
-                    <Table.Cell>{artisan.debt}</Table.Cell>
+                    <Table.Cell><NumberFormat value={artisan.debt} displayType={'text'} thousandSeparator={true}/></Table.Cell>
                     <Table.Cell textAlign='center'>
                         <Button as={Link} to='/dashboard/pengrajin/create-artisan' icon style={{backgroundColor:'transparent', padding:'0px'}} id={artisan._id} onClick={onClick}>
                             <Icon name='edit outline' size='large' />
@@ -58,7 +59,7 @@ const Pengrajin = ({ getArtisans, getEditID, artisans: {loading, artisans} }) =>
                                     <Table.HeaderCell>Email</Table.HeaderCell>
                                     <Table.HeaderCell>Alamat</Table.HeaderCell>
                                     <Table.HeaderCell>Telp/HP</Table.HeaderCell>
-                                    <Table.HeaderCell>Piutang</Table.HeaderCell>
+                                    <Table.HeaderCell>Piutang (Rp)</Table.HeaderCell>
                                     <Table.HeaderCell>Edit/Info</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>

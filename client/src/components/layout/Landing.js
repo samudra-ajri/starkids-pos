@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import NumberFormat from 'react-number-format';
 
 import Spinner from '../layout/Spinner';
 import { getItems } from '../../actions/items';
@@ -16,7 +17,8 @@ const Landing = ({ isAuthenticated, getItems, basketItems, cleanBasket, item: { 
  
   useEffect(() => {
     getItems();
-  }, [getItems]);
+    basketItems(select);
+  }, [getItems, select]);
 
   const onSearchChange = e => {
     setSearch(e.target.value)
@@ -33,8 +35,6 @@ const Landing = ({ isAuthenticated, getItems, basketItems, cleanBasket, item: { 
       }
     } 
   }
-  
-  basketItems(select);
 
   const onClickBasket = (e, {id} )=> {
     cleanBasket(basket, id);
@@ -58,10 +58,10 @@ const Landing = ({ isAuthenticated, getItems, basketItems, cleanBasket, item: { 
         <Card.Content textAlign='center' style={selectID.includes(item._id) ? { backgroundColor: '#B7FFC9' } : {}}>
           <Card.Header>{item.name}</Card.Header>
             <Card.Description>
-              Rp {item.price.retail}/pcs
+              <NumberFormat value={item.price.retail} displayType={'text'} thousandSeparator={true} prefix={'Rp '}/>/pcs
             </Card.Description>
             <Card.Description>
-              Rp {item.price.wholesale}/kodi
+              <NumberFormat value={item.price.wholesale} displayType={'text'} thousandSeparator={true} prefix={'Rp '}/>/kodi
             </Card.Description>
             <Card.Description>
               <small>stok: {item.quantity}</small>
