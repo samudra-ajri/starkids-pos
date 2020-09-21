@@ -7,6 +7,7 @@ import customer from './customer';
 import material from './material';
 import artisan from './artisan';
 import artisantransaction from './artisantransaction';
+import debtsubsidiaryledgers from './debtsubsidiaryledgers';
 
 export default combineReducers({
   alert,
@@ -16,5 +17,6 @@ export default combineReducers({
   customer,
   material,
   artisan,
-  artisantransaction
+  artisantransaction,
+  debtsubsidiaryledgers
 });

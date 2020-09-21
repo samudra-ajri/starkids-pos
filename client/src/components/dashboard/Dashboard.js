@@ -42,11 +42,11 @@ const Dashboard = () => {
 
                             <PrivateRoute exact path="/dashboard/pelanggan" component={Pelanggan} />
                             <PrivateRoute exact path="/dashboard/pelanggan/create-customer" component={CreateCustomer} />
-                            <PrivateRoute exact path="/dashboard/pelanggan/info" component={CustomerInfo} />
+                            <PrivateRoute path="/dashboard/pelanggan/info" component={CustomerInfo} />
 
                             <PrivateRoute exact path="/dashboard/pengrajin" component={Pengrajin} />
                             <PrivateRoute exact path="/dashboard/pengrajin/create-artisan" component={CreateArtisan} />
-                            <PrivateRoute exact path="/dashboard/pengrajin/info" component={ArtisanInfo} />
+                            <PrivateRoute path="/dashboard/pengrajin/info" component={ArtisanInfo} />
 
                             <PrivateRoute exact path="/dashboard/bahan" component={BahanBaku} />
                             <PrivateRoute exact path="/dashboard/bahan/create-material" component={CreateMaterial} />

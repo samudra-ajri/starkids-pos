@@ -24,7 +24,8 @@ const initialState = {
     addquantity: 0, 
     qty_repayment: 0, 
     qty_debt: 0, 
-    debt: 0
+    debt: 0,
+    description: ''
 }
 
 const Artisan = ({ 
@@ -39,7 +40,7 @@ const Artisan = ({
 
     let {
         status, item, artisan, qty_order, qty_finish, order_date, finish_date, materials,
-        action, repayment_type, unit, addquantity, qty_repayment, qty_debt, debt
+        action, repayment_type, unit, addquantity, qty_repayment, qty_debt, debt, description
     } = formData;
 
     if (status === 'Pelunasan') action = 'Pelunasan';
@@ -56,7 +57,7 @@ const Artisan = ({
     }, [loading, getArtisanTransaction, editID, transaction, artisan, item]);
 
     const onChange = (e) => {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
     if (transaction && action === 'Pelunasan') {
@@ -80,8 +81,14 @@ const Artisan = ({
             formData.qty_finish = qty_finish + qty_repayment;
             if (status === 'On Progress') {
                 patchDebt({ 'debt': artisan.debt + debt }, artisan._id);
+                formData.balance = artisan.debt + debt;
+                formData.total = debt;
+                formData.status_dsl = 'credit';
             } else if (status === 'Pelunasan') {
                 patchDebt({ 'debt': artisan.debt - (qty_repayment/20 * item.price.wholesale) }, artisan._id);
+                formData.balance = artisan.debt - (qty_repayment/20 * item.price.wholesale);
+                formData.total = (qty_repayment/20 * item.price.wholesale);
+                formData.status_dsl = 'debit';
             }
             
             if (repayment_type === 'barang') patchQuantity({ 'quantity': item.quantity + qty_repayment }, item._id);
@@ -273,6 +280,17 @@ const Artisan = ({
                                 value={debt}
                                 onChange={onChange}
                                 disabled
+                            />
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Uraian Transaksi</label>
+                            <input 
+                                type="text"
+                                placeholder='Uraian Transaksi' 
+                                name="description"
+                                value={description}
+                                onChange={onChange}
+                                required
                             />
                         </Form.Field>
                     </Fragment>

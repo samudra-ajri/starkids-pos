@@ -1,5 +1,6 @@
 import api from '../utils/api';
 import { setAlert } from './alert';
+import { createDSL } from './debtsubsidiaryledgers';
 
 import {
     BASKET_ARTISAN_TRANSACTIONS,
@@ -61,6 +62,32 @@ export const cleanBasket = (materials, materialID) => async dispatch => {
 // Create a artisan transaction
 export const createArtisanTransaction = (formData, history, artisanTransactionID) => async dispatch => {
   try {
+
+    if (formData.action === 'Pelunasan' && formData.status === 'Selesai') { 
+    } else {
+      if (formData.status_dsl) {
+
+        let credit = 0;
+        let debit = 0;
+  
+        if (formData.status_dsl === 'credit') {
+          credit = formData.total;
+        } else {
+          debit = formData.total;
+        }
+  
+        const dslData = {
+          debtor: formData.artisan,
+          credit, 
+          debit, 
+          balance: formData.balance, 
+          description: formData.description
+        }
+  
+        dispatch(createDSL(dslData));
+      }
+    }
+
     let back = ''
     if (artisanTransactionID !== '') {
       await api.put(`/artisantransactions/${artisanTransactionID}`, formData);
@@ -125,6 +152,7 @@ export const getArtisanTransactions = (from, to, page, artisanName) => async dis
     
     let pagination = 50;
     if (artisanName) pagination = 10;
+    if (artisanName && !page) pagination = '';
     const res = await api.get(`/artisantransactions?artisan=${artisanName}&from=${from}&to=${to}&page=${page}&pagination=${pagination}`);
 
     dispatch({

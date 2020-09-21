@@ -1,5 +1,6 @@
 import api from '../utils/api';
 import { setAlert } from './alert';
+import { createDSL } from './debtsubsidiaryledgers';
 
 import {
     BASKET_TRANSACTIONS,
@@ -58,6 +59,29 @@ export const cleanBasket = (items, itemID) => async dispatch => {
 // Create a transaction
 export const createTransaction = (formData, history) => async dispatch => {
   try {
+
+    if (formData.payment_type !== 'tunai') {
+
+      let credit = 0;
+      let debit = 0;
+
+      if (formData.payment_type === 'angsur') {
+        credit = formData.total;
+      } else {
+        debit = formData.total;
+      }
+
+      const dslData = {
+        debtor: formData.customer,
+        credit, 
+        debit, 
+        balance: formData.balance, 
+        description: formData.description
+      }
+
+      dispatch(createDSL(dslData));
+    }
+    
     await api.post('/transactions', formData);
 
     dispatch({

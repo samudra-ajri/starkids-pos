@@ -18,7 +18,7 @@ const Landing = ({ isAuthenticated, getItems, basketItems, cleanBasket, item: { 
   useEffect(() => {
     getItems();
     basketItems(select);
-  }, [getItems, select]);
+  }, [getItems, basketItems, select]);
 
   const onSearchChange = e => {
     setSearch(e.target.value)

@@ -16,7 +16,8 @@ const Material = ({ isAuthenticated, getMaterials, basketMaterials, cleanBasket,
  
   useEffect(() => {
     getMaterials();
-  }, [getMaterials]);
+    basketMaterials(select);
+  }, [getMaterials, basketMaterials, select]);
 
   const onSearchChange = e => {
     setSearch(e.target.value)
@@ -34,7 +35,7 @@ const Material = ({ isAuthenticated, getMaterials, basketMaterials, cleanBasket,
     } 
   }
   
-  basketMaterials(select);
+  
 
   const onClickBasket = (e, {id} )=> {
     cleanBasket(basket, id);

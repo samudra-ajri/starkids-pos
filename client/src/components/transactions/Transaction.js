@@ -25,9 +25,10 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
     initialState['payment_type'] = 'tunai';
     initialState['stuff'] = basket;
     initialState['total'] = 0;
+    initialState['description'] = '';
     
     const [formData, setFormData] = useState(initialState);
-    const { payment_type } = formData; 
+    const { description, payment_type } = formData; 
     
     const onChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -101,11 +102,12 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
             customer: formData['customer'],
             payment_type: formData['payment_type'],
             stuff: completeStuff,
-            total: formData['total']
+            total: formData['total'],
+            description: description,
+            balance: debt
         }
         createTransaction(finalData, history);
     }
-
 
     const renderItem = item => {
         return (
@@ -192,9 +194,14 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
                         onChange={onChange}
                         required
                     >
-                        <option value="tunai">Tunai</option>
-                        <option value="angsur">Angsur</option>
+                        <option value=''>--pilih tipe pembayaran--</option>
+                        {formData['stuff'].length !== 0 ?
+                        <Fragment>
+                            <option value="tunai">Tunai</option>
+                            <option value="angsur">Angsur</option>
+                        </Fragment> :
                         <option value="pelunasan">Pelunasan</option>
+                        }
                     </select>
                 </Form.Field>
                 <Form.Field>
@@ -208,6 +215,19 @@ const Transaction = ({ basket, getCustomers, patchDebt, customers: {customers}, 
                         disabled={payment_type === 'pelunasan' ? false : true}
                     />
                 </Form.Field>
+                {payment_type !== 'tunai' &&
+                    <Form.Field>
+                        <label>Uraian Transaksi</label>
+                        <input 
+                            type="text"
+                            placeholder='Uraian Transaksi' 
+                            name="description"
+                            value={description}
+                            onChange={onChange}
+                            required
+                        />
+                    </Form.Field>
+                }
                 <div>
                     <Button as={Link} to='/'>Kembali</Button>
                     <Button primary type='submit'>Submit</Button>
