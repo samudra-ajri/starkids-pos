@@ -53,6 +53,7 @@ import {
       case CLEAR_CUSTOMER:
         return {
           ...state,
+          editID: '',
           customer: null
         };
       default:

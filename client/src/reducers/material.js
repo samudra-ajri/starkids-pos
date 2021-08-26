@@ -46,6 +46,7 @@ import {
       case CLEAR_MATERIAL:
         return {
           ...state,
+          editID: '',
           material: null
         };
       default:

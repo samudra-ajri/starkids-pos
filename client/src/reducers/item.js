@@ -54,6 +54,7 @@ import {
       case CLEAR_ITEM:
         return {
           ...state,
+          editID: '',
           item: null
         };
       default:

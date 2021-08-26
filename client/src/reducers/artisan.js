@@ -53,6 +53,7 @@ import {
         case CLEAR_ARTISAN:
             return {
             ...state,
+            editID: '',
             artisan: null
             };
         default:
