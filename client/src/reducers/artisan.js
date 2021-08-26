@@ -1,10 +1,10 @@
 import {
-    GET_ARTISANS,
     GET_ARTISAN,
+    GET_ARTISANS,
+    ERROR_ARTISAN,
+    CLEAR_ARTISAN,
     UPDATE_ARTISAN,
     IS_EDIT_ARTISAN,
-    ERROR_ARTISAN,
-    CLEAR_ARTISAN
   } from '../actions/types';
 
   const initialState = {
@@ -48,13 +48,11 @@ import {
             ...state,
             error: payload,
             loading: false,
-            editID: 'false',
             artisan: null
             };
         case CLEAR_ARTISAN:
             return {
             ...state,
-            editID: 'false',
             artisan: null
             };
         default:

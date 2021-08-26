@@ -1,10 +1,10 @@
 import {
-    GET_CUSTOMERS,
     GET_CUSTOMER,
+    GET_CUSTOMERS,
+    ERROR_CUSTOMER,
+    CLEAR_CUSTOMER,
     UPDATE_CUSTOMER,
     IS_EDIT,
-    ERROR_CUSTOMER,
-    CLEAR_CUSTOMER
   } from '../actions/types';
 
   const initialState = {
@@ -48,13 +48,11 @@ import {
           ...state,
           error: payload,
           loading: false,
-          editID: 'false',
           customer: null
         };
       case CLEAR_CUSTOMER:
         return {
           ...state,
-          editID: 'false',
           customer: null
         };
       default:

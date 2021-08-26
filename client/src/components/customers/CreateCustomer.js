@@ -28,7 +28,7 @@ const CreateCustomer = ({ createCustomer, getCustomer, history, customer:{custom
         }
     }, [loading, getCustomer, editID, customer]);
     
-    const { name, email, address, phone, debt } = formData;
+    let { name, email, address, phone, debt } = formData;
     
     const onChange = e => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -46,7 +46,7 @@ const CreateCustomer = ({ createCustomer, getCustomer, history, customer:{custom
                 <Icon name="arrow left" size="large" />
             </Menu.Item>
             <h3>
-                { !editID ? 'Tambah ' : 'Update ' }Pelanggan
+                { editID ? 'Update ' :'Tambah ' }Pelanggan
             </h3>
             <Form style={{paddingBottom:'3rem'}} onSubmit={onSubmit}>
                 <Form.Field>
@@ -102,7 +102,7 @@ const CreateCustomer = ({ createCustomer, getCustomer, history, customer:{custom
                     <small>cth: 15000</small>
                 </Form.Field>
                 <div>
-                    <Button primary type='submit'>{ !editID ? 'Tambah' : 'Update' }</Button>
+                    <Button primary type='submit'>{ editID ? 'Update' : 'Tambah' }</Button>
                 </div>
             </Form>
         </Fragment>

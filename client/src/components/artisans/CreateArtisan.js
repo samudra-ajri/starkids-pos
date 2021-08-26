@@ -46,7 +46,7 @@ const CreateArtisan = ({ createArtisan, getArtisan, history, artisan:{artisan, e
                 <Icon name="arrow left" size="large" />
             </Menu.Item>
             <h3>
-                { !editID ? 'Tambah ' : 'Update ' }Pengrajin
+                { editID ? 'Update ' :'Tambah ' }Pengrajin
             </h3>
             <Form style={{paddingBottom:'3rem'}} onSubmit={onSubmit}>
                 <Form.Field>
@@ -102,7 +102,7 @@ const CreateArtisan = ({ createArtisan, getArtisan, history, artisan:{artisan, e
                     <small>cth: 15000</small>
                 </Form.Field>
                 <div>
-                    <Button primary type='submit'>{ !editID ? 'Tambah' : 'Update' }</Button>
+                    <Button primary type='submit'>{ editID ? 'Update' : 'Tambah' }</Button>
                 </div>
             </Form>
         </Fragment>
