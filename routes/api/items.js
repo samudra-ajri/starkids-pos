@@ -28,7 +28,7 @@ router.post('/', [auth, [
             let item = await Item.findOne({ name });
 
             if (item) {
-                return res.status(400).json({ errors: [{ msg: 'Item already exists' }] });
+                return res.status(400).json({ errors: [{ msg: 'Nama produk telah digunakan' }] });
             }
 
             item = new Item({
@@ -43,7 +43,7 @@ router.post('/', [auth, [
             res.json(item);
         } catch (err) {
             console.error(err.message);
-            res.status(500).send('Server Error');
+            res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
         }
     }
 );
@@ -62,7 +62,7 @@ router.get('/', async (req, res) => {
         res.json(items);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
@@ -74,13 +74,13 @@ router.get('/:id', checkObjectId('id'), async (req, res) => {
         const item = await Item.findById(req.params.id);
 
         if (!item) {
-            return res.status(404).json({ msg: 'Item not found' });
+            return res.status(404).json({ msg: 'Produk tidak ditemukan' });
         }
 
         res.json(item);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
@@ -92,7 +92,7 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
         const item = await Item.findById(req.params.id);
     
         if (!item) {
-            return res.status(404).json({ msg: 'Item not found' });
+            return res.status(404).json({ msg: 'Produk tidak ditemukan' });
         }
     
         await item.remove();
@@ -100,7 +100,7 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
         res.json({ msg: 'Item removed' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
   });
 
@@ -135,8 +135,10 @@ router.put('/:id', [auth, checkObjectId('id'), [
             
             res.json(updatedItem);
         } catch (err) {
-            console.error(err.message);
-            res.status(500).send('Server Error');
+            if (err.codeName === 'DuplicateKey') {
+                return res.status(400).json({ errors: [{ msg: 'Nama produk telah digunakan' }] });
+            }
+            res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
         }
     }
 );
@@ -155,7 +157,7 @@ router.post('/upload', auth, async (req, res) => {
     file.mv(`${__dirname}/../../client/src/img/${nameItem}_${file.name}`, err => {
         if (err) {
             console.error(err);
-            return res.status(500).send('Server Error');
+            return res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
         }
 
         res.json({ fileName: file.name, filePath: `/img/${file.name}` });
@@ -173,7 +175,7 @@ router.patch('/:id', [auth, checkObjectId('id')], async (req, res) => {
         res.json(item);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 

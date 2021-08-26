@@ -44,7 +44,7 @@ router.post('/', [auth, [
             res.json(artisantransaction);
         } catch (err) {
             console.error(err.message);
-            res.status(500).send('Server Error');
+            res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
         }
     }
 );
@@ -97,7 +97,7 @@ router.get('/', auth, async (req, res) => {
         res.json(artisantransactions);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
@@ -130,7 +130,7 @@ router.get('/:id', [auth, checkObjectId('id')], async (req, res) => {
         res.json(artisantransaction);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
@@ -150,7 +150,7 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
         res.json({ msg: 'Artisan transaction removed' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
@@ -173,7 +173,7 @@ router.put('/:id', [auth, checkObjectId('id'), [
             res.json(updatedArtisanTransaction);
         } catch (err) {
             console.error(err.message);
-            res.status(500).send('Server Error');
+            res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
         }
     }
 );
@@ -188,7 +188,7 @@ router.patch('/:id', [auth, checkObjectId('id')], async (req, res) => {
         res.json(item);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 

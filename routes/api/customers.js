@@ -22,10 +22,10 @@ router.post('/', [auth, [
         const { name, email, address, phone, debt } = req.body;
 
         try {
-            let customer = await Customer.findOne({ name });
+            let customer = await Customer.findOne({ $or:[{name}, {email}] });
 
             if (customer) {
-                return res.status(400).json({ errors: [{ msg: 'Customer already exists' }] });
+                return res.status(400).json({ errors: [{ msg: 'Nama atau Email telah digunakan' }] });
             }
 
             customer = new Customer({
@@ -41,7 +41,7 @@ router.post('/', [auth, [
             res.json(customer);
         } catch (err) {
             console.error(err.message);
-            res.status(500).send('Server Error');
+            res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
         }
     }
 );
@@ -60,7 +60,7 @@ router.get('/', auth, async (req, res) => {
         res.json(customers);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
@@ -72,13 +72,13 @@ router.get('/:id', [auth, checkObjectId('id')], async (req, res) => {
         const customer = await Customer.findById(req.params.id);
 
         if (!customer) {
-            return res.status(404).json({ msg: 'Customer not found' });
+            return res.status(404).json({ msg: 'Pelanggan tidak ditemukan' });
         }
 
         res.json(customer);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
@@ -90,7 +90,7 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
         const customer = await Customer.findById(req.params.id);
     
         if (!customer) {
-            return res.status(404).json({ msg: 'Customer not found' });
+            return res.status(404).json({ msg: 'Pelanggan tidak ditemukan' });
         }
     
         await customer.remove();
@@ -98,7 +98,7 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
         res.json({ msg: 'Customer removed' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
   });
 
@@ -119,8 +119,10 @@ router.put('/:id', [auth, checkObjectId('id'), [
             
             res.json(updatedCustomer);
         } catch (err) {
-            console.error(err.message);
-            res.status(500).send('Server Error');
+            if (err.codeName === 'DuplicateKey') {
+                return res.status(400).json({ errors: [{ msg: 'Nama atau Email telah digunakan' }] });
+            }
+            res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
         }
     }
 );
@@ -135,7 +137,7 @@ router.patch('/:id', [auth, checkObjectId('id')], async (req, res) => {
         res.json(item);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 

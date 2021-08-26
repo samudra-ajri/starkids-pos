@@ -22,10 +22,10 @@ router.post('/', [auth, [
         const { name, email, address, phone, debt } = req.body;
 
         try {
-            let artisan = await Artisan.findOne({ name });
+            let artisan = await Artisan.findOne({ $or:[{name}, {email}] });
 
             if (artisan) {
-                return res.status(400).json({ errors: [{ msg: 'Artisan already exists' }] });
+                return res.status(400).json({ errors: [{ msg: 'Nama atau Email telah digunakan' }] });
             }
 
             artisan = new Artisan({
@@ -40,8 +40,8 @@ router.post('/', [auth, [
 
             res.json(artisan);
         } catch (err) {
-            console.error(err.message);
-            res.status(500).send('Server Error');
+            // console.error(err.message);
+            res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
         }
     }
 );
@@ -59,7 +59,7 @@ router.get('/', auth, async (req, res) => {
         res.json(artisans);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
@@ -71,13 +71,13 @@ router.get('/:id', [auth, checkObjectId('id')], async (req, res) => {
         const artisan = await Artisan.findById(req.params.id);
 
         if (!artisan) {
-            return res.status(404).json({ msg: 'Artisan not found' });
+            return res.status(404).json({ msg: 'Pengrajin belum terdaftar' });
         }
 
         res.json(artisan);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
@@ -89,7 +89,7 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
         const artisan = await Artisan.findById(req.params.id);
     
         if (!artisan) {
-            return res.status(404).json({ msg: 'Artisan not found' });
+            return res.status(404).json({ msg: 'Pengrajin belum terdaftar' });
         }
     
         await artisan.remove();
@@ -97,7 +97,7 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
         res.json({ msg: 'Artisan removed' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
   });
 
@@ -118,8 +118,10 @@ router.put('/:id', [auth, checkObjectId('id'), [
             
             res.json(updatedArtisan);
         } catch (err) {
-            console.error(err.message);
-            res.status(500).send('Server Error');
+            if (err.codeName === 'DuplicateKey') {
+                return res.status(400).json({ errors: [{ msg: 'Nama atau Email telah digunakan' }] });
+            }
+            res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
         }
     }
 );
@@ -134,7 +136,7 @@ router.patch('/:id', [auth, checkObjectId('id')], async (req, res) => {
         res.json(item);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 

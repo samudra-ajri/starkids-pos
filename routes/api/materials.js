@@ -28,7 +28,7 @@ router.post('/', [auth, [
             let material = await Material.findOne({ name });
 
             if (material) {
-                return res.status(400).json({ errors: [{ msg: 'Material already exists' }] });
+                return res.status(400).json({ errors: [{ msg: 'Nama bahan telah digunakan' }] });
             }
 
             material = new Material({
@@ -43,7 +43,7 @@ router.post('/', [auth, [
             res.json(material);
         } catch (err) {
             console.error(err.message);
-            res.status(500).send('Server Error');
+            res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
         }
     }
 );
@@ -57,7 +57,7 @@ router.get('/', async (req, res) => {
         res.json(materials);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
@@ -69,13 +69,13 @@ router.get('/:id', checkObjectId('id'), async (req, res) => {
         const material = await Material.findById(req.params.id);
 
         if (!material) {
-            return res.status(404).json({ msg: 'Material not found' });
+            return res.status(404).json({ msg: 'Bahan tidak ditemukan' });
         }
 
         res.json(material);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
@@ -87,7 +87,7 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
         const material = await Material.findById(req.params.id);
     
         if (!material) {
-            return res.status(404).json({ msg: 'Material not found' });
+            return res.status(404).json({ msg: 'Bahan tidak ditemukan' });
         }
     
         await material.remove();
@@ -95,7 +95,7 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
         res.json({ msg: 'Material removed' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
   });
 
@@ -130,8 +130,10 @@ router.put('/:id', [auth, checkObjectId('id'), [
             
             res.json(updatedMaterial);
         } catch (err) {
-            console.error(err.message);
-            res.status(500).send('Server Error');
+            if (err.codeName === 'DuplicateKey') {
+                return res.status(400).json({ errors: [{ msg: 'Nama bahan telah digunakan' }] });
+            }
+            res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
         }
     }
 );
@@ -147,7 +149,7 @@ router.patch('/:id', [auth, checkObjectId('id')], async (req, res) => {
         res.json(material);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({ errors: [{ msg: 'Terjadi kesalahan' }] });
     }
 });
 
